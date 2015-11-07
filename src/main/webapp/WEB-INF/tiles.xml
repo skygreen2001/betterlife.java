@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+    <definition name="base.definition" template="/WEB-INF/views/layout/layout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/views/layout/header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/layout/menu.jsp" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+    </definition>
+ 
+    <definition name="contact" extends="base.definition">
+        <put-attribute name="title" value="编辑美味通信薄" />
+        <put-attribute name="body" value="/WEB-INF/views/contact.jsp" />
+    </definition>
+    
+    <definition name="home" extends="base.definition">
+        <put-attribute name="title" value="美味通信薄" />
+        <put-attribute name="body" value="/WEB-INF/views/home.jsp" />
+    </definition>
+ 
+</tiles-definitions>

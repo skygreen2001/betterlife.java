@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"  
+    xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd  
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+		
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+	    <property name="driverClassName" value="org.postgresql.Driver"></property>
+	    <property name="url" value="jdbc:postgresql://localhost:5432/betterlife">
+	    </property>
+	    <property name="username" value="postgres"></property>
+	    <property name="password" value="SA123.com"></property>
+	</bean>
+	<!--创建Spring的SessionFactory工厂 -->
+	<!--和hibernate4整合没有提供专门的针对Annotation的类，直接在LocalSessionFactoryBean中已经集成-->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	    <!-- 注入数据源 -->
+	    <property name="dataSource" ref="dataSource" />
+	    <!-- 设置Spring去哪个包中查找相应的实体类 -->
+	    <property name="packagesToScan">
+	        <list>
+	            <value>com.kstm.betterlife.domain</value>
+	        </list>
+	    </property>
+	    <property name="hibernateProperties">
+	        <props>
+	            <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+	            <prop key="hibernate.hbm2ddl.auto">update</prop>
+	            <prop key="hibernate.connection.autocommit">true</prop>
+	            <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+	            <prop key="hibernate.show_sql">true</prop>
+	            <prop key="hibernate.format_sql">true</prop>
+	        </props>
+	    </property>
+	</bean>
+	
+	<!-- 定义JDBC模板Bean -->  
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"   
+        p:dataSource-ref="dataSource"/>
+          
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <tx:method name="*"/>  
+        </tx:attributes>  
+    </tx:advice>
+
+    <!-- 通过AOP配置提供事务增强,让biz包下所有Bean的所有方法拥有事务 -->  
+    <aop:config proxy-target-class="true">  
+        <aop:pointcut id="serviceMethod" expression=" execution(* com.kstm.betterlife.service.*.*(..))" />  
+        <aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice"/>  
+    </aop:config>
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+	    <property name="definitions">
+	        <list>
+	            <value>/WEB-INF/tiles.xml</value>
+	        </list>
+	    </property>
+	</bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	    <property name="viewClass">
+	        <value>org.springframework.web.servlet.view.tiles2.TilesView</value>
+	    </property>
+	</bean>
+	
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+</beans>
