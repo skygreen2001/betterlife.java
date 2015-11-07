@@ -69,7 +69,7 @@ public class HomeController {
 		return new ModelAndView("home");
 	}
 
-	@RequestMapping(value = " /")
+	@RequestMapping(value = "/")
 	public String loginPage() {
 		User user = (User) session.getAttribute("user");
 		if (user == null) {
