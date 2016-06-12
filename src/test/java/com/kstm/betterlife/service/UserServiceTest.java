@@ -1,26 +1,24 @@
 package com.kstm.betterlife.service;
 
 
-import java.util.Date;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import javax.annotation.Resource;
+import java.util.Date;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-
-import org.testng.annotations.*;
-import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
 import com.kstm.betterlife.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "file:webapp/WEB-INF/spring/root-context.xml" })
 public class UserServiceTest extends AbstractJUnit4SpringContextTests{
-	
+
 	@Autowired
 	private UserService userService;
 
