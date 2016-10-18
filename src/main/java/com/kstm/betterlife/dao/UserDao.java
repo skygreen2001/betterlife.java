@@ -17,7 +17,8 @@ public class UserDao {
     public int getMatchCount(String userName, String password) {
         String sqlStr = " SELECT count(*) FROM bb_user_user "
                 + " WHERE username =? and password=? ";
-        return jdbcTemplate.queryForInt(sqlStr, new Object[]{userName, password});
+
+        return jdbcTemplate.queryForObject(sqlStr, new Object[]{userName, password},Integer.class);
     }
 
     public User findUserByUserName(final String userName) {
@@ -26,6 +27,7 @@ public class UserDao {
         final User user = new User();
         jdbcTemplate.query(sqlStr, new Object[]{userName},
                 new RowCallbackHandler() {
+                    @Override
                     public void processRow(ResultSet rs) throws SQLException {
                         user.setUserId(rs.getInt("user_id"));
                         user.setUserName(userName);
