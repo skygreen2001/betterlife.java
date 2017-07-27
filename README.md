@@ -13,9 +13,9 @@
   ```
   > cd ~/ && mkdir SpringProjects && cd SpringProjects
 
-  > git clone -b Betterlife git@github.com:skygreen2001/betterlife.java.git spring.boot
+  > git clone -b spring.boot git@github.com:skygreen2001/betterlife.java.git Betterlife
   或者
-  > git clone -b Betterlife https://github.com/skygreen2001/betterlife.java.git spring.boot
+  > git clone -b spring.boot https://github.com/skygreen2001/betterlife.java.git Betterlife
 
   ```
 - 在IDE工具里打开工程

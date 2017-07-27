@@ -62,9 +62,11 @@ public class AppConfig implements ServletContextInitializer {
             Object obj = sc.getAttribute("users");
             Map<String, String> users = (Map<String, String>) (obj == null ? new HashMap<String, String>() : obj);
             StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage()); // 获取消息头
-            String name = headers.getNativeHeader("accessToken").get(0); // 获取账号名
-            users.put(name, headers.getSessionId());
-            sc.setAttribute("users", users); // 将用户信息已map格式放存放起来
+            if (headers.getNativeHeader("accessToken") != null) {
+                String name = headers.getNativeHeader("accessToken").get(0); // 获取账号名
+                users.put(name, headers.getSessionId());
+                sc.setAttribute("users", users); // 将用户信息已map格式放存放起来
+            }
         }
     }
 
