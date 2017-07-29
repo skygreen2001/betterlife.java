@@ -29,7 +29,7 @@
     - 分别在两个命令行工具运行以下指令，可使浏览器自动刷新查看到您最新的修改内容
 
     ```
-    > mvn install
+    > mvn -Dmaven.test.skip=true install
     > java -jar target/*.jar
     ```
 
