@@ -5,14 +5,13 @@ import javax.inject.Inject;
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 
 import com.zyp.bb.domain.Customer;
+import com.zyp.bb.message.amqp.Sender;
 import com.zyp.bb.respository.CustomerRespository;
-import com.zyp.bb.websocket.Sender;
 
 /**
  *
@@ -23,7 +22,6 @@ import com.zyp.bb.websocket.Sender;
  * @author skygreen
  *
  */
-@EnableAutoConfiguration
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 

@@ -17,10 +17,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 @Configuration
-@EnableSwagger2
+// @EnableSwagger2
 @EnableAsync
 @EnableScheduling
 public class AppConfig implements ServletContextInitializer {

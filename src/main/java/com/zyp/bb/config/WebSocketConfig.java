@@ -41,7 +41,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ittr-websocket").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/better-websocket").setAllowedOrigins("*").withSockJS();
         // .setClientLibraryUrl("//w/js/sockjs.min.js");
     }
 

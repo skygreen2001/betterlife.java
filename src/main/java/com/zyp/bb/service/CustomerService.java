@@ -19,8 +19,8 @@ import org.springframework.web.context.WebApplicationContext;
 import com.zyp.bb.config.AppConfig;
 import com.zyp.bb.domain.Customer;
 import com.zyp.bb.domain.Greeting;
+import com.zyp.bb.message.amqp.Sender;
 import com.zyp.bb.respository.CustomerRespository;
-import com.zyp.bb.websocket.Sender;
 
 @Component
 @Lazy

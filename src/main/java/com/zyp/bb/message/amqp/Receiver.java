@@ -1,4 +1,4 @@
-package com.zyp.bb.websocket;
+package com.zyp.bb.message.amqp;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

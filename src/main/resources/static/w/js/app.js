@@ -14,7 +14,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/ittr-websocket');
+    var socket = new SockJS('/better-websocket');
     stompClient = Stomp.over(socket);
     var accessToken = $("#account").val();
     var headers = {
