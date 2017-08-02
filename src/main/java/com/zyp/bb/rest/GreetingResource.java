@@ -3,8 +3,7 @@ package com.zyp.bb.rest;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,7 +18,8 @@ import com.zyp.bb.service.CustomerService;
 @RestController
 public class GreetingResource {
 
-    @Inject
+    // @Inject
+    @Autowired
     private CustomerService customerService;
 
     @RequestMapping("/greet")

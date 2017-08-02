@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,11 @@ import com.zyp.bb.respository.CustomerRespository;
 @Component
 @Lazy
 public class CustomerService {
-    @Inject
+    // @Inject
+    @Autowired
     CustomerRespository customerRespository;
-    @Inject
+    // @Inject
+    @Autowired
     Sender sender;
 
     private Map<String, String> userMessages = new HashMap<String, String>();

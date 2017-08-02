@@ -2,8 +2,7 @@ package com.zyp.bb.rest;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +17,12 @@ import com.zyp.bb.service.CustomerService;
 @RestController
 public class CustomerResource{
 
-    @Inject
+    // @Inject
+    @Autowired
     private CustomerService customerService;
 
-    @Inject
+    // @Inject
+    @Autowired
     private CustomerRespository customerRespository;
 
     @RequestMapping("/customers")

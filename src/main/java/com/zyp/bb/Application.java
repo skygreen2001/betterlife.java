@@ -1,8 +1,7 @@
 package com.zyp.bb;
 
-import javax.inject.Inject;
-
 import org.h2.server.web.WebServlet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,7 +24,8 @@ import com.zyp.bb.respository.CustomerRespository;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    @Inject
+    // @Injec
+    @Autowired
     Sender sender;
 
     public static void main(String[] args) {
