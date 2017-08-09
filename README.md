@@ -37,6 +37,7 @@
 
 ## 发布
 - 发布到测试服务器
+  
 
 
 - 发布到正式服务器
@@ -46,4 +47,37 @@
   ```
   > tail -f -n 400 catalina.out
   ```
+  
+## 运行RabbitMQ Server
+    - [Ubuntu: Start and Stop the RabbitMQ Server] (https://pubs.vmware.com/vfabric53/index.jsp?topic=/com.vmware.vfabric.rabbitmq.3.2/getstart/install-start-server-ubuntu.html)
+    - [RabbitMQ安装和使用](https://chyufly.github.io/blog/2016/04/10/rabbitmq-setup/)
+    - 安装路径
+        [Mac系统](/usr/local/Cellar/rabbitmq/)
+    
+    - 启动:
+    ```
+    > invoke-rc.d rabbitmq-server start
+    ```
+    
+    - 停止:
+    ```
+    > invoke-rc.d rabbitmq-server stop
+    ```
 
+    - 管理:
+    ```
+    > rabbitmq-plugins enable rabbitmq_management
+    ```
+    
+    - 外网浏览器访问管理:
+    测试账户: itaskTour2006 
+    密码: skygreen2001
+    设置角色: sudo rabbitmqctl set_user_tags itaskTour2006 administrator
+    
+    访问: http://server-name:15672/
+
+
+## 参考
+
+- [物联网通信协议](https://github.com/ruizeng/blog/blob/master/IoT/iot-protocols.md)
+- [RabbitMQ Quick（快速手册）](https://geewu.gitbooks.io/rabbitmq-quick/content/RabbitMQ%E4%BB%8B%E7%BB%8D.html)
