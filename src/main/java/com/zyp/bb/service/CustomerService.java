@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,6 +26,7 @@ import com.zyp.bb.respository.CustomerRespository;
 @Component
 @Lazy
 public class CustomerService {
+    private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
     // @Inject
     @Autowired
     CustomerRespository customerRespository;
@@ -49,7 +52,7 @@ public class CustomerService {
         // Thread.sleep(1000); // simulated delay
         double d = Math.random();
         int i = (int) (d * 1000000);
-        System.out.println("Hello, Every One " + i + "!");
+        logger.debug("Hello, Every One " + i + "!");
         template.convertAndSend("/topic/greetings", new Greeting("Hello, Every One " + i + "!"));
 
         WebApplicationContext webApplicationContext = AppConfig.getCurrentWebApplicationContext();
