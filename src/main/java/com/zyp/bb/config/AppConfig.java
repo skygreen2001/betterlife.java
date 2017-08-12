@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +14,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 
 @Configuration
-// @EnableSwagger2
+@ConfigurationProperties //[查看配置] (http://localhost:8080/configprops)
+@EnableGlobalMethodSecurity
+// @EnableSwagger2 //[API documentation](http://localhost:8080/swagger-ui.html)
 @EnableAsync
 @EnableScheduling
 public class AppConfig implements ServletContextInitializer {
