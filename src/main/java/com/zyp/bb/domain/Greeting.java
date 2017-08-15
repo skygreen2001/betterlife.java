@@ -1,8 +1,9 @@
 package com.zyp.bb.domain;
 
 public class Greeting {
-    private String message;
     private String name;
+    private String message;
+    private String content;
 
     public Greeting() {
     }
@@ -26,5 +27,19 @@ public class Greeting {
     public void setName(String name) {
         this.name = name;
     }
-    // add getter and setter
+
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Greeting [message=" + message + ", name=" + name + ", content=" + content + "]";
+    }
 }

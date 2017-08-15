@@ -14,7 +14,9 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/better-websocket');
+    // var socket = new SockJS('/better-websocket');
+    var socket = new SockJS('http://localhost:8080/better-websocket');
+
     stompClient = Stomp.over(socket);
     var accessToken = $("#account").val();
     var headers = {

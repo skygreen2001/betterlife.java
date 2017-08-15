@@ -24,7 +24,7 @@ import com.zyp.bb.respository.CustomerRespository;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    // @Injec
+    // @Inject
     @Autowired
     Sender sender;
 

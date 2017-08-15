@@ -3,6 +3,8 @@ package com.zyp.bb.rest;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -18,7 +20,8 @@ import com.zyp.bb.service.CustomerService;
 @RestController
 public class GreetingResource {
 
-    // @Inject
+    private final Logger logger = LoggerFactory.getLogger(GreetingResource.class);
+
     @Autowired
     private CustomerService customerService;
 
@@ -41,6 +44,7 @@ public class GreetingResource {
             String userID = map.get("accessToken").get(0);
             customerService.setName(userID, message.getName());
         }
+        logger.debug( "Receive Msg Info, " + msg +  "!");
         return new Greeting("Hello, " + msg + "!");
 
     }

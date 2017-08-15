@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -20,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 /**
  * [STOMP Over WebSocket](http://jmesnil.net/stomp-websocket/doc/)
@@ -37,6 +40,20 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/queue/", "/topic");
         registry.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public boolean configureMessageConverters(List<MessageConverter> arg0) {
+//        StringMessageConverter strConvertor = new StringMessageConverter();
+        MappingJackson2MessageConverter mc = new MappingJackson2MessageConverter();
+        arg0.add(mc);
+        return true;
+    }
+
+    //https://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setSendTimeLimit(15 * 1000).setSendBufferSizeLimit(512 * 1024);
     }
 
     @Override
