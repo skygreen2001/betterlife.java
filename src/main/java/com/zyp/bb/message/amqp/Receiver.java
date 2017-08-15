@@ -18,6 +18,6 @@ public class Receiver {
 
     @RabbitListener(queues = "CustomerQ")
     public void processMessage(String message) {
-        logger.debug("[Receiver Report]" + message);
+        logger.debug("[Receiver BB Report]" + message);
     }
 }

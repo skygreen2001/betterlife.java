@@ -82,7 +82,13 @@
     - 外网浏览器访问管理:
     测试账户: itaskTour2006 
     密码: skygreen2001
-    设置角色: sudo rabbitmqctl set_user_tags itaskTour2006 administrator
+    
+    设置角色: 
+    ```
+    > sudo rabbitmqctl set_user_tags itaskTour2006 administrator
+    > sudo rabbitmqctl set_permissions -p / itaskTour2006 '.*' '.*' '.*'
+    > sudo rabbitmqctl list_users
+    ```
     
     访问: http://server-name:15672/
 

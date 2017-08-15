@@ -54,6 +54,7 @@ public class CustomerService {
         int i = (int) (d * 1000000);
         logger.debug("Hello, Every One " + i + "!");
         template.convertAndSend("/topic/greetings", new Greeting("Hello, Every One " + i + "!"));
+        sender.send("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
 
         WebApplicationContext webApplicationContext = AppConfig.getCurrentWebApplicationContext();
         if (webApplicationContext != null) {
@@ -67,7 +68,7 @@ public class CustomerService {
             if (users != null) {
                 Set<String> set = users.keySet();
                 Iterator<String> iterator = set.iterator();
-                String msg = "";
+                String msg;
                 while (iterator.hasNext()) { // 遍历根据用户进行推送
                     String key = iterator.next();
                     d = Math.random();
