@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
@@ -29,9 +30,9 @@ public class WebsocketTest {
 
     //[Connecting to HTML5 Websocket](https://stackoverflow.com/questions/14554273/connecting-to-html5-websocket/14555549#14555549)
     //[failed: Unexpected response code: 200](http://procbits.com/2013/10/09/connecting-to-a-sockjs-server-from-native-html5-websocket)
-    private static final String url = "ws://localhost:8080/better-websocket/websocket";
-//    private static final String url = "ws://debug.itasktour.com:8080/ittr-websocket/websocket";
-//    private static final String url = "ws://localhost:8080/ittr-websocket/websocket";
+    @Value("${websocket.url}")
+    private String websocketUrl;
+
     private final Logger logger = LoggerFactory.getLogger(WebsocketTest.class);
     private WebSocketClient webSocketClient;
     private WebSocketStompClient stompClient;
@@ -54,17 +55,21 @@ public class WebsocketTest {
     public static void main(String[] args){
         WebsocketTest wt=new WebsocketTest();
         wt.setup();
-        wt.connect();
+        wt.connectTest();
     }
 
     @Test
+    public void connectTest(){
+        this.connect();
+    }
+
     public void connect(){
         //Calls initialize() after the container applied all property values.
         taskScheduler.afterPropertiesSet();
         stompClient.setTaskScheduler(taskScheduler);// for heartbeats
 
         sessionHandler = new MyStompSessionHandler();
-        stompClient.connect(url, sessionHandler);
+        stompClient.connect(websocketUrl, sessionHandler);
 
         try {
             latch.await();

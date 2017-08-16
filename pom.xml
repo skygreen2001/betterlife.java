@@ -22,7 +22,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<!-- log configuration -->
 		<logback.loglevel>INFO</logback.loglevel>
 	</properties>
 
@@ -114,7 +113,7 @@
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
-			<version>4.9</version><!--$NO-MVN-MAN-VER$-->
+			<version>4.11</version><!--$NO-MVN-MAN-VER$-->
 			<exclusions>
 				<exclusion>
 					<artifactId>logback-core</artifactId>
@@ -153,8 +152,6 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency> -->
-
-
 
 		<!--<dependency>-->
 			<!--<groupId>org.springframework.boot</groupId>-->

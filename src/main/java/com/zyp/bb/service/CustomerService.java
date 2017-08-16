@@ -55,6 +55,7 @@ public class CustomerService {
         logger.debug("Hello, Every One " + i + "!");
         template.convertAndSend("/topic/greetings", new Greeting("Hello, Every One " + i + "!"));
         sender.send("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
+//        sender.send(new Greeting("Hello this is rabbit Messaging" + i + " for Betterlife!!!"));
 
         WebApplicationContext webApplicationContext = AppConfig.getCurrentWebApplicationContext();
         if (webApplicationContext != null) {
