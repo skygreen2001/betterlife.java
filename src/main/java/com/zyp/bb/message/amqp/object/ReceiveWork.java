@@ -1,6 +1,7 @@
-package com.zyp.bb.message.amqp;
+package com.zyp.bb.message.amqp.object;
 
 import com.zyp.bb.domain.Greeting;
+import com.zyp.bb.message.amqp.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class ReceiveWork {
     private CountDownLatch latch = new CountDownLatch(1);
 
     public void receiveMessage(String message) {
-        logger.debug("Received <" + message + ">");
+        logger.debug("[Receiver BB Object Report]" + message);
         latch.countDown();
     }
 

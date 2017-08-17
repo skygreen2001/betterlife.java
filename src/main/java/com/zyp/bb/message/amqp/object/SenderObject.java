@@ -1,4 +1,4 @@
-package com.zyp.bb.message.amqp;
+package com.zyp.bb.message.amqp.object;
 
 import com.zyp.bb.domain.Greeting;
 import org.springframework.amqp.core.Queue;
