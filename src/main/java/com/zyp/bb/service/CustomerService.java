@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import com.zyp.bb.message.amqp.SenderObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,13 @@ public class CustomerService {
     private final Logger logger = LoggerFactory.getLogger(CustomerService.class);
     // @Inject
     @Autowired
-    CustomerRespository customerRespository;
+    private CustomerRespository customerRespository;
     // @Inject
     @Autowired
-    Sender sender;
+    private Sender sender;
+    // @Inject
+    @Autowired
+    private SenderObject objectSender;
 
     private Map<String, String> userMessages = new HashMap<String, String>();
 
@@ -48,14 +52,13 @@ public class CustomerService {
     @Scheduled(fixedRate = 8000)
     @Lazy(false)
     public void greetingGood() throws Exception {
-        // public Greeting greetingGood() throws Exception {
         // Thread.sleep(1000); // simulated delay
         double d = Math.random();
         int i = (int) (d * 1000000);
         logger.debug("Hello, Every One " + i + "!");
         template.convertAndSend("/topic/greetings", new Greeting("Hello, Every One " + i + "!"));
         sender.send("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
-//        sender.send(new Greeting("Hello this is rabbit Messaging" + i + " for Betterlife!!!"));
+        objectSender.send(new Greeting("Hello this is rabbit Messaging" + i + " for Betterlife!!!"));
 
         WebApplicationContext webApplicationContext = AppConfig.getCurrentWebApplicationContext();
         if (webApplicationContext != null) {

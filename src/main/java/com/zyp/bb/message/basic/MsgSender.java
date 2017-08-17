@@ -12,8 +12,8 @@ import java.util.concurrent.TimeoutException;
 
 /**
  * Created by skygreen on 2017/8/16.
+ * 参考:[轻松搞定RabbitMQ](https://www.kancloud.cn/longxuan/rabbitmq-arron/117512)
  */
-
 @Component
 @Lazy
 public class MsgSender {
