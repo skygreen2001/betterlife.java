@@ -17,10 +17,12 @@ import java.util.concurrent.TimeoutException;
 @Component
 @Lazy
 public class MsgSender {
-    private final static String QUEUE_NAME = "hello";
 
     @Value("${spring.rabbitmq.host}")
     private String host;
+
+    @Value("${queue.basic}")
+    private String queue_basic;
 
     public MsgSender(){
 
@@ -40,11 +42,11 @@ public class MsgSender {
             // 创建一个频道
             Channel channel = connection.createChannel();
             // 指定一个队列
-            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+            channel.queueDeclare(queue_basic, false, false, false, null);
             // 发送的消息
             String message = "hello world!龙轩";
             // 往队列中发出一条消息
-            channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+            channel.basicPublish("", queue_basic, null, message.getBytes());
             System.out.println(" [x] Sent '" + message + "'");
             channel.close();
 

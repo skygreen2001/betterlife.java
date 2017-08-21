@@ -24,7 +24,6 @@ public class ReceiveObject {
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(queueGreet);
         container.setMessageListener(listenerAdapter);
-//        container.setMessageConverter(messageConverter);
         container.setMessageConverter(jsonMessageConverter());
         return container;
     }
@@ -34,37 +33,10 @@ public class ReceiveObject {
         return new JsonMessageConverter();
     }
 
-//    @Bean
-//    public MessageConverter messageConverter() {
-//        Jackson2JsonMessageConverter jackson2JsonMessageConverter = new Jackson2JsonMessageConverter();
-////        jackson2JsonMessageConverter.setClassMapper(new ClassMapper() {
-////
-////			@Override
-////			public void fromClass(Class<?> arg0, MessageProperties arg1) {
-////			}
-////
-////			@Override
-////			public Class<?> toClass(MessageProperties arg0) {
-////				return null;
-////			}
-////
-////        });
-//        return jackson2JsonMessageConverter;
-//    }
-
     @Bean
     MessageListenerAdapter listenerAdapter(ReceiveWork receiveWork) {
         MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(receiveWork, "receiveMessage");
-//        messageListenerAdapter.setMessageConverter(messageConverter());
-
         messageListenerAdapter.setMessageConverter(jsonMessageConverter());
         return messageListenerAdapter;
     }
-
-
-
-//    @RabbitListener(queues = "${queue.greet}")
-//    public void processMessage(Greeting message) {
-//        logger.debug("[Receiver BB Object Report]" + message.getMessage());
-//    }
 }
