@@ -20,23 +20,14 @@ public class Sender {
     @Value("${queue.normal}")
     private String queueNormal;
 
-//    @Autowired
-//    public Sender(RabbitMessagingTemplate template) {
-//        this.template = template;
-//    }
-
-//    @Autowired
-//    public Sender(RabbitTemplate template) {
-//        this.template = template;
-//    }
-
     @Bean
     public Queue queue() {
-        return new Queue(queueNormal, false);
+        return new Queue(queueNormal, true);
     }
 
     public void send(String message) {
-        template.convertAndSend(queueNormal, "[BB]:"+message);
+//        template.convertAndSend(queueNormal, "[BB]:"+message);
+        template.convertSendAndReceive(queueNormal, "[BB]:"+message);
     }
 
 

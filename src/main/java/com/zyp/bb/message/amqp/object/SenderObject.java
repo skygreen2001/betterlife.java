@@ -24,29 +24,13 @@ public class SenderObject {
 
     @Bean
     public Queue queueGreet() {
-        return new Queue(queueGreet, false);
+        return new Queue(queueGreet, true);
     }
 
     public void send(Greeting message) {
-        template.convertAndSend(queueGreet, message);
-//        template.convertAndSend(queueGreet, message.getMessage());
+//        template.convertAndSend(queueGreet, message);
+        template.convertSendAndReceive(queueGreet, message);
 
-//        template.setMessageConverter(new SimpleMessageConverter());
-//        template.convertAndSend(queueGreet, message, m -> {
-//            m.getMessageProperties().setContentType("application/json");
-//            return m;
-//        });
     }
-
-//    @Bean
-//    TopicExchange exchange() {
-//        return new TopicExchange("spring-boot-exchange");
-//    }
-//
-//
-//    @Bean
-//    Binding binding(Queue queue, TopicExchange exchange) {
-//        return BindingBuilder.bind(queue).to(exchange).with(queueGreet);
-//    }
 
 }

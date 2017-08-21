@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  * 官网示例:[Hello World!](https://www.rabbitmq.com/tutorials/tutorial-one-python.html)
  */
 @Component
-public class MsgSender {
+public class T1MsgSender {
 
     @Value("${spring.rabbitmq.host}")
     private String host;
@@ -23,7 +23,7 @@ public class MsgSender {
     @Value("${queue.basic}")
     private String queue_basic;
 
-    public MsgSender(){
+    public T1MsgSender(){
 
     }
 
