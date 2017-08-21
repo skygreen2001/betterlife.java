@@ -22,6 +22,7 @@ java -version
 echo "--------------------------Run info-----------------------------"
 echo "[重要]:本服务器需要JDK版本为1.8"
 echo "-------如JDK版本低于1.8，您可以直接运行: /var/msgserver/./msgserver.jar"
+echo "-------或者设置Maven的pom.xml里第24行配置<properties><java.version>服务器端版本号</java.version></properties>"
 case $1 in
     start)
         echo "Starting $SERVICE_NAME ..."

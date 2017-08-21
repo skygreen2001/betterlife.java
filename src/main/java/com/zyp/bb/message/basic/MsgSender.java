@@ -15,7 +15,6 @@ import java.util.concurrent.TimeoutException;
  * 参考:[轻松搞定RabbitMQ](https://www.kancloud.cn/longxuan/rabbitmq-arron/117512)
  */
 @Component
-@Lazy
 public class MsgSender {
 
     @Value("${spring.rabbitmq.host}")
@@ -44,7 +43,7 @@ public class MsgSender {
             // 指定一个队列
             channel.queueDeclare(queue_basic, false, false, false, null);
             // 发送的消息
-            String message = "hello world!龙轩";
+            String message = "hello world! Skygreen";
             // 往队列中发出一条消息
             channel.basicPublish("", queue_basic, null, message.getBytes());
             System.out.println(" [x] Sent '" + message + "'");

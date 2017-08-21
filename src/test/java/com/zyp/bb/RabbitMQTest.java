@@ -1,5 +1,6 @@
 package com.zyp.bb;
 
+import com.zyp.bb.message.basic.MsgReceiver;
 import com.zyp.bb.message.basic.MsgSender;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,18 +20,22 @@ public class RabbitMQTest {
     @Autowired
     MsgSender msgSender;
 
+    @Autowired
+    MsgReceiver msgReceiver;
+
     @Before
     public void setup() {
 
     }
 
     @Test
-    public void runTest(){
-        this.run();
+    public void runSend(){
+        msgSender.send();
     }
 
-    public void run() {
-        msgSender.send();
+    @Test
+    public void runReceive() {
+        msgReceiver.receive();
     }
 
 }
