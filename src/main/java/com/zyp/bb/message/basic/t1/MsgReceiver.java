@@ -1,4 +1,4 @@
-package com.zyp.bb.message.basic;
+package com.zyp.bb.message.basic.t1;
 
 import com.rabbitmq.client.*;
 import org.springframework.beans.factory.annotation.Value;

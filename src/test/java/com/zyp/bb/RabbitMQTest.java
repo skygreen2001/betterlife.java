@@ -1,7 +1,7 @@
 package com.zyp.bb;
 
-import com.zyp.bb.message.basic.MsgReceiver;
-import com.zyp.bb.message.basic.MsgSender;
+import com.zyp.bb.message.basic.t1.MsgReceiver;
+import com.zyp.bb.message.basic.t1.MsgSender;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

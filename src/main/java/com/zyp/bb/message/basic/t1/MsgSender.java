@@ -1,10 +1,9 @@
-package com.zyp.bb.message.basic;
+package com.zyp.bb.message.basic.t1;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Created by skygreen on 2017/8/16.
  * 参考:[轻松搞定RabbitMQ](https://www.kancloud.cn/longxuan/rabbitmq-arron/117512)
+ * 官网示例:[Hello World!](https://www.rabbitmq.com/tutorials/tutorial-one-python.html)
  */
 @Component
 public class MsgSender {
