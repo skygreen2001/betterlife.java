@@ -18,15 +18,15 @@ public class ReceiveWork {
 
     private CountDownLatch latch = new CountDownLatch(1);
 
-    public void receiveMessage(String message) {
+//    public void receiveMessage(String message) {
+//        logger.debug("[Receiver BB Object Report]" + message);
+//        latch.countDown();
+//    }
+
+    public void receiveMessage(Greeting message) {
         logger.debug("[Receiver BB Object Report]" + message);
         latch.countDown();
     }
-
-//    public void receiveMessage(Greeting message) {
-//        logger.debug("Received <" + message + ">");
-//        latch.countDown();
-//    }
 
     public CountDownLatch getLatch() {
         return latch;

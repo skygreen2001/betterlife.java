@@ -28,8 +28,8 @@ public class SenderObject {
     }
 
     public void send(Greeting message) {
-//        template.convertAndSend(queueGreet, message);
-        template.convertAndSend(queueGreet, message.getMessage());
+        template.convertAndSend(queueGreet, message);
+//        template.convertAndSend(queueGreet, message.getMessage());
 
 //        template.setMessageConverter(new SimpleMessageConverter());
 //        template.convertAndSend(queueGreet, message, m -> {
