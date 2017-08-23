@@ -85,8 +85,9 @@
     - 密码: skygreen2001
     - 设置角色: 
         ```
-        > sudo rabbitmqctl set_user_tags itaskTour2006 administrator
-        > sudo rabbitmqctl set_permissions -p / itaskTour2006 '.*' '.*' '.*'
+        > sudo rabbitmqctl add_user skygreen2001 skygreen2001
+        > sudo rabbitmqctl set_user_tags skygreen2001 administrator
+        > sudo rabbitmqctl set_permissions -p / skygreen2001 '.*' '.*' '.*'
         > sudo rabbitmqctl list_users
         ```
   
