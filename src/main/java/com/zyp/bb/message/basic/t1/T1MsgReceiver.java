@@ -18,7 +18,7 @@ public class T1MsgReceiver {
     @Value("${spring.rabbitmq.host}")
     private String host;
 
-    @Value("${queue.basic}")
+    @Value("${app.queue.basic}")
     private String queue_basic;
 
 

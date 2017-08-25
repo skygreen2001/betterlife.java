@@ -23,17 +23,14 @@ public class T2MsgSender {
     @Value("${spring.rabbitmq.host}")
     private String host;
 
-    @Value("${queue.basic}")
+    @Value("${app.queue.basic}")
     private String queue_basic;
 
     public static final void main(String[] args){
-        T2MsgSender ts = new T2MsgSender("127.0.0.1", "HelloQ");
+        T2MsgSender ts = new T2MsgSender();
+        ts.host = "127.0.0.1";
+        ts.queue_basic = "HelloQ";
         ts.send();
-    }
-
-    public T2MsgSender(String host,String queue_basic){
-        this.host = host;
-        this.queue_basic = queue_basic;
     }
 
     public void send() {

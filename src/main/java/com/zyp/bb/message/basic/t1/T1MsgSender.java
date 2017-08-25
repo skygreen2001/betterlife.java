@@ -20,12 +20,8 @@ public class T1MsgSender {
     @Value("${spring.rabbitmq.host}")
     private String host;
 
-    @Value("${queue.basic}")
+    @Value("${app.queue.basic}")
     private String queue_basic;
-
-    public T1MsgSender(){
-
-    }
 
     public void send() {
         /**

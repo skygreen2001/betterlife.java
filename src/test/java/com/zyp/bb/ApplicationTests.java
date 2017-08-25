@@ -14,7 +14,7 @@ import com.zyp.bb.domain.Greeting;
 @SpringBootTest
 public class ApplicationTests {
 
-    @Value("${test.server.url}")
+    @Value("${app.test.server.url}")
     private String serverUrl;
 
     @Test

@@ -1,5 +1,6 @@
 package com.zyp.bb.service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zyp.bb.message.amqp.object.SenderObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,8 @@ public class CustomerService {
     @Autowired
     private SimpMessagingTemplate template;
 
+    private ObjectMapper mapper = new ObjectMapper();
+
     /**
      * [spring websocket 基于编码的方式手动进行推送]
      * (http://www.voidcn.com/blog/yingxiake/article/p-5789769.html)
@@ -60,11 +64,20 @@ public class CustomerService {
         sender.send("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
         objectSender.send(new Greeting("Hello this is rabbit Messaging" + i + " for Betterlife!!!"));
 
+        String jsonStr="";
+        Greeting greeting = new Greeting("[BB]:+Hello this is rabbit Messaging" + i + " for Betterlife!!!");
+
+        try {
+            jsonStr = mapper.writeValueAsString(greeting);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        sender.sendJsonString(jsonStr);
+
         WebApplicationContext webApplicationContext = AppConfig.getCurrentWebApplicationContext();
         if (webApplicationContext != null) {
             ServletContext sc = webApplicationContext.getServletContext();
 
-            @SuppressWarnings("unchecked")
             Map<String, String> users = sc.getAttribute("users") == null ? null
                     : (Map<String, String>) sc.getAttribute("users");// 获取放在servletContext中的用户信息
 

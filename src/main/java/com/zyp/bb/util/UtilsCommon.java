@@ -26,24 +26,4 @@ public class UtilsCommon {
         }
     }
 
-//    public static void main(String[] args){
-//        String message ="aaaaa";
-//        if (UtilsCommon.isJsonString(message)) {
-//            System.out.println("ok");
-//        }else{
-//            System.out.println("bad");
-//        }
-//        message ="{'aaaa':'dddd'}";
-//        if (UtilsCommon.isJsonString(message)) {
-//            System.out.println("ok1");
-//        }else{
-//            System.out.println("bad1");
-//        }
-//        message ="{\"access_token\":\"$2a$10$ScndhRMpszcSN90SsA9OFe3W9S1JxLvkPtTr7abXusiykOQ4drnHS\",\"user_id\":1320}";
-//        if (UtilsCommon.isJsonString(message)) {
-//            System.out.println("ok2");
-//        }else{
-//            System.out.println("bad2");
-//        }
-//    }
 }

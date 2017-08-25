@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 public class RabbitMQTest {
 
     @Autowired

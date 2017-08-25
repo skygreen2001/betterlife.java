@@ -1,6 +1,7 @@
 package com.zyp.bb.message.basic.t2;
 
 import com.rabbitmq.client.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,21 +19,17 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class T2MsgReceiver {
 
-
     @Value("${spring.rabbitmq.host}")
     private String host;
 
-    @Value("${queue.basic}")
+    @Value("${app.queue.basic}")
     private String queue_basic;
 
     public static final void main(String[] args){
-        T2MsgReceiver tr = new T2MsgReceiver("127.0.0.1", "HelloQ");
+        T2MsgReceiver tr = new T2MsgReceiver();
+        tr.host = "127.0.0.1";
+        tr.queue_basic = "HelloQ";
         tr.receive();
-    }
-
-    public T2MsgReceiver(String host,String queue_basic){
-        this.host = host;
-        this.queue_basic = queue_basic;
     }
 
     public void receive() {

@@ -1,11 +1,13 @@
 package com.zyp.bb.message.amqp;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +19,7 @@ public class Sender {
     private RabbitTemplate template;
 //    RabbitMessagingTemplate template;
 
-    @Value("${queue.normal}")
+    @Value("${app.queue.normal}")
     private String queueNormal;
 
     @Bean
@@ -30,6 +32,7 @@ public class Sender {
         template.convertSendAndReceive(queueNormal, "[BB]:"+message);
     }
 
-
-
+    public void sendJsonString(String message) {
+        template.convertSendAndReceive(queueNormal, message);
+    }
 }

@@ -30,7 +30,7 @@ public class WebsocketTest {
 
     //[Connecting to HTML5 Websocket](https://stackoverflow.com/questions/14554273/connecting-to-html5-websocket/14555549#14555549)
     //[failed: Unexpected response code: 200](http://procbits.com/2013/10/09/connecting-to-a-sockjs-server-from-native-html5-websocket)
-    @Value("${websocket.url}")
+    @Value("${app.websocket.url}")
     private String websocketUrl;
 
     private final Logger logger = LoggerFactory.getLogger(WebsocketTest.class);

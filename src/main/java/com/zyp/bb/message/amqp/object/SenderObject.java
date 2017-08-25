@@ -19,7 +19,7 @@ public class SenderObject {
     private RabbitTemplate template;
 //  private  RabbitMessagingTemplate template;
 
-    @Value("${queue.greet}")
+    @Value("${app.queue.greet}")
     private String queueGreet;
 
     @Bean

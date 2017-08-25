@@ -1,0 +1,48 @@
+# ===================================================================
+#
+# Spring Boot configuration for the Betterlife.
+#
+# ===================================================================
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+#server.port=8080
+
+security:
+  basic:
+    enabled: false
+  user:
+    name: guest
+    password: guest123
+
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:bb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  rabbitmq:
+    host: localhost
+#    host: debug.betterlife.com
+    port: 5672
+    username: skygreen2001
+    password: skygreen2001
+
+# ========================== 本应用自定义配置 ==========================
+app:
+  queue:
+    basic: HelloQ
+    normal: CustomerQ
+    greet: GreetQ
+    loginQ: LoginQ
+  websocket:
+    url: ws://localhost:8080/better-websocket/websocket
+#    url: ws://debug.betterlife.com:8080/ittr-websocket/websocket
+  test:
+    server:
+      url: http://localhost:8080

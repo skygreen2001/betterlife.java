@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ReceiveObject {
-    @Value("${queue.greet}")
+    @Value("${app.queue.greet}")
     private String queueGreet;
 
     @Bean

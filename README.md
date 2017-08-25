@@ -92,6 +92,39 @@
         ```
   
   - 访问: http://server-name:15672/
+ 
+## 内存持久化
+- Redis
+    - [下载Redis](https://redis.io/download)
+    - 生成运行包
+    ```
+    > cd redis-4.0.1 && make && make test [第一次]
+    ```
+    - [启动Redis]  
+    ```
+    > src/redis-server
+    ```
+    - [在服务器上部署Redis](https://redis.io/topics/quickstart)
+      - [How To Install and Configure Redis on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-redis-on-ubuntu-16-04)
+        ```
+        > cp src/redis-server /usr/local/bin/ && cp src/redis-cli /usr/local/bin/
+        > sudo mkdir /etc/redis && sudo mkdir /var/redis
+        > sudo cp utils/redis_init_script /etc/init.d/redis_6379
+        > sudo vi /etc/init.d/redis_6379
+        > sudo cp redis.conf /etc/redis/6379.conf
+        > sudo mkdir /var/redis/6379
+        > sudo vi /etc/redis/6379.conf
+          - daemonize yes
+          - pidfile /var/run/redis_6379.pid
+          - logfile "/var/log/redis_6379.log"
+          - dir /var/redis/6379
+        > sudo update-rc.d redis_6379 defaults
+        > sudo /etc/init.d/redis_6379 start
+        ```
+    
+- MongoDB
+    - [MacOS下载MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+    - [Linux下载MongoDB](https://docs.mongodb.com/manual/administration/install-on-linux/)
 
 ## 参考
 
