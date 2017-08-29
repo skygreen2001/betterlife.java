@@ -28,7 +28,7 @@ public class T1MsgSender {
          * 创建连接连接到MabbitMQ
          */
         ConnectionFactory factory = new ConnectionFactory();
-        // 设置MabbitMQ所在主机ip或者主机名
+        // 设置RabbitMQ所在主机ip或者主机名
         factory.setHost(host);
         // 创建一个连接
         Connection connection = null;

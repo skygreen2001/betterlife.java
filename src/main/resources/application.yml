@@ -36,6 +36,7 @@ spring:
 # ========================== 本应用自定义配置 ==========================
 app:
   queue:
+    exchangeName: logs
     basic: HelloQ
     normal: CustomerQ
     greet: GreetQ
