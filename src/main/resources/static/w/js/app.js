@@ -31,12 +31,16 @@ function connect() {
         setConnected(true);
 //        console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/greetings', function (greeting) {
-        	    console.log("better");
+            console.log("better");
             showGreeting(JSON.parse(greeting.body).message);
         });
         stompClient.subscribe('/user/queue/come', function (greeting) {
-        	    console.log("wonderful");
+            console.log("wonderful");
             showGreeting(JSON.parse(greeting.body).message);
+        });
+        stompClient.subscribe('/tick', function (greeting) {
+            console.log("heart beat");
+            showGreeting(JSON.parse(greeting.body));
         });
     });
 }

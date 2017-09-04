@@ -47,6 +47,21 @@ public class CustomerService {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    private int h1;
+
+    /**
+     * 心跳测试
+     *
+     * @throws Exception
+     */
+    @Scheduled(fixedRate = 5000)
+    @Lazy(false)
+    public void heartbeat() throws Exception {
+        h1 += 1;
+        logger.debug("Hello, Heart Beat " + h1 + "!");
+        template.convertAndSend("/tick", "1");
+    }
+
     /**
      * [spring websocket 基于编码的方式手动进行推送]
      * (http://www.voidcn.com/blog/yingxiake/article/p-5789769.html)
@@ -55,7 +70,7 @@ public class CustomerService {
      */
     @Scheduled(fixedRate = 8000)
     @Lazy(false)
-    public void greetingGood() throws Exception {
+    public void test() throws Exception {
         // Thread.sleep(1000); // simulated delay
         double d = Math.random();
         int i = (int) (d * 1000000);
