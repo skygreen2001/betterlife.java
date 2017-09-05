@@ -48,7 +48,7 @@ public class BbUser implements Serializable {
      * @return
      */
     public int size(){
-        Set userIds = template.keys(prefix_key);
+        Set userIds = template.keys(prefix_key+"*");
         return userIds.size();
     }
 
@@ -57,7 +57,7 @@ public class BbUser implements Serializable {
      * @return
      */
     public void report(){
-        Set userIds = template.keys(prefix_key);
+        Set userIds = template.keys(prefix_key+"*");
         String accessToken;
         for (Object userId:userIds) {
             accessToken = ( String )template.opsForValue().get(userId);
