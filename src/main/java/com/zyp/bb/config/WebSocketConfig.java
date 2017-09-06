@@ -3,6 +3,8 @@ package com.zyp.bb.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zyp.bb.message.amqp.Sender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -35,6 +37,9 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+
+    @Autowired
+    Sender sender;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -74,11 +79,13 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String jwtToken = accessor.getFirstNativeHeader("accessToken");
                     if (!StringUtils.isEmpty(jwtToken)) {
-                        String userID = accessor.getNativeHeader("accessToken").get(0);
+                        String accessTocken = accessor.getNativeHeader("accessToken").get(0);
                         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-                        Authentication auth = new UsernamePasswordAuthenticationToken(userID, null, grantedAuthorities);
+                        Authentication auth = new UsernamePasswordAuthenticationToken(accessTocken, null, grantedAuthorities);
                         SecurityContextHolder.getContext().setAuthentication(auth);
                         accessor.setUser(auth);
+
+                        sender.login(accessTocken);
                     }
                 }
 
