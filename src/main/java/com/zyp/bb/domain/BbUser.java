@@ -94,6 +94,25 @@ public class BbUser implements Serializable {
     }
 
     /**
+     * 获取所有的用户
+     * @return 每个元素为AccessToken
+     */
+    public Map<Long, String> getAllUsers(){
+        Set userIds = template.keys(prefix_key+"*");
+        String accessToken;
+        Long userId;
+        Map<Long, String> result = new HashMap<>();
+        for (Object userIdTmp:userIds) {
+            accessToken = ( String )template.opsForValue().get(userIdTmp);
+            String userIdStr = (String) userIdTmp;
+            userIdStr = userIdStr.replace(prefix_key, "");
+            userId = Long.parseLong(userIdStr);
+            result.put(userId, accessToken);
+        }
+        return result;
+    }
+
+    /**
      * 报告登录用户信息
      * @return
      */

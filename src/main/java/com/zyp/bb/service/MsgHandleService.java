@@ -8,10 +8,13 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Created by skygreen on 06/09/2017.
@@ -32,6 +35,37 @@ public class MsgHandleService {
     private ObjectMapper mapper = new ObjectMapper();
 
     private Object result = null;
+
+    private int h1;
+
+    /**
+     * 发送心跳消息
+     *
+     * @throws Exception
+     */
+    @Scheduled(fixedRate = 10000)
+    @Lazy(false)
+    public void heartbeat() throws Exception {
+        h1 += 1;
+        logger.debug("Hello, Heart Beat " + h1 + "!");
+
+//        template.convertAndSend("/tick", "1");
+
+        Map<Long, String> accessTokes = bbUser.getAllUsers();
+        for (Long userId:
+                accessTokes.keySet()) {
+            template.convertAndSendToUser(bbUser.get(userId), "/tick", "1");
+            logger.debug("Hello, Heart Beat " + h1 + "![userId]:"+userId+",[accessToken]:" + bbUser.get(userId));
+//            logger.debug("key = " + userId + ", value = " + accessToken);
+        }
+
+//        for (String accessToken:
+//                accessTokes.values()) {
+//            template.convertAndSendToUser(accessToken, "/tick", "1");
+//            logger.debug("Hello, Heart Beat " + h1 + "![accessToken]:" + accessToken);
+////            logger.debug("key = " + userId + ", value = " + accessToken);
+//        }
+    }
 
     /**
      * 处理接收到的消息

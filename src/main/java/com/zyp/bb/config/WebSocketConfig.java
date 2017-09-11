@@ -1,7 +1,9 @@
 package com.zyp.bb.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.zyp.bb.message.amqp.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+
+    private Map<String, String> sessionUserInfos= new HashMap<>();
 
     @Autowired
     Sender sender;
@@ -74,22 +78,36 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+            StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String jwtToken = accessor.getFirstNativeHeader("accessToken");
-                    if (!StringUtils.isEmpty(jwtToken)) {
-                        String accessTocken = accessor.getNativeHeader("accessToken").get(0);
-                        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-                        Authentication auth = new UsernamePasswordAuthenticationToken(accessTocken, null, grantedAuthorities);
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                        accessor.setUser(auth);
+            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                String accessToken = accessor.getFirstNativeHeader("accessToken");
+                if (!StringUtils.isEmpty(accessToken)) {
+                    accessToken = accessor.getNativeHeader("accessToken").get(0);
+                    List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+                    Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    accessor.setUser(auth);
+                    sessionUserInfos.put( accessor.getSessionId(),accessToken);
 
-                        sender.login(accessTocken);
-                    }
+                    sender.sendLogin(accessToken);
                 }
+            }else if  (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                String accessToken = sessionUserInfos.get(accessor.getSessionId());
+                if (!StringUtils.isEmpty(accessToken)) {
+                    sender.sendLeave(accessToken);
+                }
+            } else if  (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+//                    if (accessor.getDestination().equals("/user/queue/offline")) {
+//                        String accessToken = sessionUserInfos.get(accessor.getSessionId());
+//                        if (!StringUtils.isEmpty(accessToken)) {
+//                        }
+//                    }
+            }
 
-                return message;
+
+
+            return message;
             }
         });
     }

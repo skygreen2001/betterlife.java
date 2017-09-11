@@ -66,7 +66,7 @@ public class AppConfig implements ServletContextInitializer {
             StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage()); // 获取消息头
             if (headers.getNativeHeader("accessToken") != null) {
                 String name = headers.getNativeHeader("accessToken").get(0); // 获取账号名
-                users.put(name, headers.getSessionId());
+                users.put(headers.getSessionId(), name);
                 sc.setAttribute("users", users); // 将用户信息已map格式放存放起来
             }
         }

@@ -54,8 +54,9 @@
     ```
     
   - 查看log
+    - 可通过修改文件:src/main/resources/logback-spring.xml 变量:SERVER_LOG_HOME 调整日志文件所在路径 
     ```
-    > tail -f -n 400 catalina.out
+    > tail -f -n 400 /var/log/msg_server/logFile.%d{yyyy-MM-dd}.log
     ```
     
 ## 运行RabbitMQ Server
@@ -65,6 +66,11 @@
   - 安装路径
       [Mac系统](/usr/local/Cellar/rabbitmq/)
  
+  - 下载: 
+  ```
+  > sudo apt-get install rabbitmq-server
+  ```
+
   - 启动:
   ```
   > invoke-rc.d rabbitmq-server start

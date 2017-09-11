@@ -59,6 +59,12 @@ public class RedisMsgSendTest {
                 "        \"access_token\": \"abcde123456~\"\n" +
                 "    }\n";
         receiver.processLoginMessage(message);
+        //测试数据
+        message = "{\n" +
+                "        \"user_id\": 8888,\n" +
+                "        \"access_token\": \"13917320293\"\n" +
+                "    }\n";
+        receiver.processLoginMessage(message);
     }
 
     @Test

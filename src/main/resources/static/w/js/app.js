@@ -38,7 +38,7 @@ function connect() {
             console.log("wonderful");
             showGreeting(JSON.parse(greeting.body).message);
         });
-        stompClient.subscribe('/tick', function (greeting) {
+        stompClient.subscribe('/user/tick', function (greeting) {
             console.log("heart beat");
             showGreeting(JSON.parse(greeting.body));
         });

@@ -34,7 +34,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        sender.send("Hello this is rabbit Messaging!!!");
+        sender.sendNormal("Hello this is rabbit Messaging!!!");
     }
 
     @Bean

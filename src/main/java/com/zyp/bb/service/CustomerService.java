@@ -1,11 +1,7 @@
 package com.zyp.bb.service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 
@@ -50,19 +46,6 @@ public class CustomerService {
     private int h1;
 
     /**
-     * 心跳测试
-     *
-     * @throws Exception
-     */
-    @Scheduled(fixedRate = 5000)
-    @Lazy(false)
-    public void heartbeat() throws Exception {
-        h1 += 1;
-        logger.debug("Hello, Heart Beat " + h1 + "!");
-        template.convertAndSend("/tick", "1");
-    }
-
-    /**
      * [spring websocket 基于编码的方式手动进行推送]
      * (http://www.voidcn.com/blog/yingxiake/article/p-5789769.html)
      *
@@ -76,7 +59,7 @@ public class CustomerService {
         int i = (int) (d * 1000000);
         logger.debug("Hello, Every One " + i + "!");
         template.convertAndSend("/topic/greetings", new Greeting("Hello, Every One " + i + "!"));
-        sender.send("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
+        sender.sendNormal("Hello this is rabbit Messaging" + i + " for Betterlife!!!");
         objectSender.send(new Greeting("Hello this is rabbit Messaging" + i + " for Betterlife!!!"));
 
         String jsonStr="";
@@ -98,8 +81,8 @@ public class CustomerService {
 
             // 获取放在servletContext中的用户信息
             if (users != null) {
-                Set<String> set = users.keySet();
-                Iterator<String> iterator = set.iterator();
+                Collection<String> its = users.values();
+                Iterator<String> iterator = its.iterator();
                 String msg;
                 while (iterator.hasNext()) { // 遍历根据用户进行推送
                     String key = iterator.next();
@@ -109,6 +92,8 @@ public class CustomerService {
                     if (userMessages.keySet().contains(key)) {
                         msg = userMessages.get(key);
                     }
+
+                    template.convertAndSendToUser(key, "/tick", new Greeting("1"));
                     template.convertAndSendToUser(key, "/queue/come", new Greeting("Hello, " + msg + i + "!"));
                 }
             }
@@ -125,7 +110,7 @@ public class CustomerService {
             throw new RuntimeException("is already exists");
         } else {
             customerRespository.save(customer);
-            sender.send(customer.getEmail());
+            sender.sendNormal(customer.getEmail());
         }
         return customer;
     }
