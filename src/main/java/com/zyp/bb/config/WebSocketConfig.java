@@ -18,6 +18,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.scheduling.concurrent.DefaultManagedTaskScheduler;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,7 +48,9 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/queue/", "/topic", "/tick");
+        registry.enableSimpleBroker("/queue/", "/topic", "/tick")
+                .setTaskScheduler(new DefaultManagedTaskScheduler())
+                .setHeartbeatValue(new long[]{1000,1000});
         registry.setApplicationDestinationPrefixes("/app");
     }
 
@@ -78,36 +81,34 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
-            StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-            if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                String accessToken = accessor.getFirstNativeHeader("accessToken");
-                if (!StringUtils.isEmpty(accessToken)) {
-                    accessToken = accessor.getNativeHeader("accessToken").get(0);
-                    List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-                    Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                    accessor.setUser(auth);
-                    sessionUserInfos.put( accessor.getSessionId(),accessToken);
-
-                    sender.sendLogin(accessToken);
-                }
-            }else if  (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-                String accessToken = sessionUserInfos.get(accessor.getSessionId());
-                if (!StringUtils.isEmpty(accessToken)) {
-                    sender.sendLeave(accessToken);
-                }
-            } else if  (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    String accessToken = accessor.getFirstNativeHeader("Access-token");
+                    System.out.println("access_token:"+accessToken);
+                    if (!StringUtils.isEmpty(accessToken)) {
+                        accessToken = accessor.getNativeHeader("Access-token").get(0);
+                        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+                        Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                        accessor.setUser(auth);
+                        sessionUserInfos.put( accessor.getSessionId(),accessToken);
+                        sender.sendLogin(accessToken);
+                    }
+                } else if  (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    String accessToken = sessionUserInfos.get(accessor.getSessionId());
+                    if (!StringUtils.isEmpty(accessToken)) {
+                        sender.sendLeave(accessToken);
+                    }
+                } else if  (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
 //                    if (accessor.getDestination().equals("/user/queue/offline")) {
 //                        String accessToken = sessionUserInfos.get(accessor.getSessionId());
 //                        if (!StringUtils.isEmpty(accessToken)) {
 //                        }
 //                    }
-            }
+                }
 
-
-
-            return message;
+                return message;
             }
         });
     }

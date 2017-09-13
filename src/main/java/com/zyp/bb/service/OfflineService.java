@@ -40,9 +40,8 @@ public class OfflineService {
      * @return
      */
     public boolean isUserLogin(Long userId){
-        String access_token = bbUser.get(userId);
-        if (StringUtils.isEmpty(access_token)) return false;
-        return true;
+        if (bbUser.isUserOffline(userId)) return true;
+        return false;
     }
 
     /**
@@ -69,25 +68,27 @@ public class OfflineService {
         Long userId = bbUser.getUserId(access_token);
         if (userId!=null){
 //            logger.debug("send msg to token:"+access_token);
-            List<JSONObject> msgs = bbMsg.getAll(userId);
-            if (msgs!=null && msgs.size()>0) {
-                Object result;
-                List<Object> pgMsg = new ArrayList<>();
-                for (JSONObject msg :
-                        msgs) {
-                    JSONObject data = msg.optJSONObject("data");
-                    try {
-                        result = mapper.readValue(data.toString(), Object.class);
-                        pgMsg.add(result);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            if (this.isUserLogin(userId)) {
+                List<JSONObject> msgs = bbMsg.getAll(userId);
+                if (msgs != null && msgs.size() > 0) {
+                    Object result;
+                    List<Object> pgMsg = new ArrayList<>();
+                    for (JSONObject msg :
+                            msgs) {
+                        JSONObject data = msg.optJSONObject("data");
+                        try {
+                            result = mapper.readValue(data.toString(), Object.class);
+                            pgMsg.add(result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 //                    logger.debug("send msg to client :" + data.toString());
 //                    logger.debug(data.toString());
-                }
-                if (pgMsg != null && pgMsg.size() > 0) {
-                    template.convertAndSendToUser(access_token, "/queue/offline", pgMsg);
+                    }
+                    if (pgMsg != null && pgMsg.size() > 0) {
+                        template.convertAndSendToUser(access_token, "/queue/offline", pgMsg);
 //                    logger.debug(pgMsg.toString());
+                    }
                 }
             }
         }

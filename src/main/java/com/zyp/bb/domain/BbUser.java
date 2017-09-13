@@ -21,8 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class BbUser implements Serializable {
 
     private final static String prefix_key = "bb-user:";
-
-    private final static String suffix_key = "-bbmsg";
+    private final static String prefix_offline_key = "off-user:";
     private final Logger logger = LoggerFactory.getLogger(BbUser.class);
 
     @Autowired
@@ -36,9 +35,16 @@ public class BbUser implements Serializable {
      * @param accessToken
      */
     public void set( final Long userId, final String accessToken ) {
-        final String key = String.format(prefix_key + "%s", userId );
-        template.opsForValue().set(key,accessToken);
-        userInfos.put(accessToken, userId);
+        if (!StringUtils.isEmpty(accessToken)) {
+            String key = String.format(prefix_key + "%s", userId );
+            userInfos.put(accessToken, userId);
+            template.opsForValue().set(key, accessToken);
+            key = String.format(prefix_offline_key + "%s", userId );
+            template.delete(key);
+        }else{
+            final String key = String.format(prefix_offline_key + "%s", userId );
+            template.opsForValue().set(key, userId);
+        }
     }
 
     /**
@@ -50,6 +56,18 @@ public class BbUser implements Serializable {
         final String key = String.format( prefix_key + "%s", userId );
         final String result = ( String )template.opsForValue().get(key);
         return result;
+    }
+
+    /**
+     * 获取指定用户编号的离线信息
+     * @param userId
+     * @return
+     */
+    public boolean isUserOffline( final Long userId) {
+        final String key = String.format( prefix_offline_key + "%s", userId );
+        final String result = ( String )template.opsForValue().get(key);
+        if(StringUtils.isEmpty(result))return false;
+        return true;
     }
 
     /**
@@ -74,6 +92,7 @@ public class BbUser implements Serializable {
                             String userIdStr = (String) userIdTmp;
                             userIdStr = userIdStr.replace(prefix_key, "");
                             userId = Long.getLong(userIdStr);
+                            this.userInfos.put(accessToken, userId);
                             break;
                         }
                         logger.debug("key = " + userId + ", value = " + accessTokenTmp);
@@ -107,7 +126,7 @@ public class BbUser implements Serializable {
             String userIdStr = (String) userIdTmp;
             userIdStr = userIdStr.replace(prefix_key, "");
             userId = Long.parseLong(userIdStr);
-            result.put(userId, accessToken);
+            if (!this.isUserOffline(userId)) result.put(userId, accessToken);
         }
         return result;
     }
@@ -117,11 +136,13 @@ public class BbUser implements Serializable {
      * @return
      */
     public void report(){
-        Set userIds = template.keys(prefix_key+"*");
+        Map<Long, String> accessTokes = this.getAllUsers();
         String accessToken;
-        for (Object userId:userIds) {
-            accessToken = ( String )template.opsForValue().get(userId);
-            logger.debug("key = " + userId + ", value = " + accessToken);
+        for (Long userId:
+                accessTokes.keySet()) {
+            accessToken = accessTokes.get(userId);
+            if (!this.isUserOffline(userId))
+                logger.debug("key = " + userId + ", value = " + accessToken);
         }
     }
 }

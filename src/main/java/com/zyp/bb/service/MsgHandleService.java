@@ -112,4 +112,25 @@ public class MsgHandleService {
             }
         }
     }
+
+    /**
+     * 处理登出信息
+     * @param access_token
+     */
+    public void handleGo(String access_token){
+        Long userId = bbUser.getUserId(access_token);
+        bbUser.set(userId, access_token);
+        logger.debug("websocket login userId:" + userId);
+    }
+
+
+    /**
+     * 处理登出信息
+     * @param access_token
+     */
+    public void handleLeave(String access_token){
+        Long userId = bbUser.getUserId(access_token);
+        bbUser.set(userId, null);
+        logger.debug("logout leave userId:" + userId);
+    }
 }

@@ -1,12 +1,7 @@
 package com.zyp.bb.message.amqp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zyp.bb.domain.BbUser;
 import com.zyp.bb.service.MsgHandleService;
 import com.zyp.bb.service.OfflineService;
-import com.zyp.bb.util.UtilsCommon;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Queue;
@@ -14,31 +9,21 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 public class Receiver {
+
     private final Logger logger = LoggerFactory.getLogger(Receiver.class);
-
-
-    @Autowired
-    private MsgHandleService msgService;
 
     @Value("${app.queue.loginQ}")
     private String queueLogin;
 
     @Autowired
-    private OfflineService offlineService;
+    private MsgHandleService msgService;
 
     @Autowired
-    private SimpMessagingTemplate template;
-
-    private ObjectMapper mapper = new ObjectMapper();
-
-    private Object result = null;
+    private OfflineService offlineService;
 
     @Bean
     public Queue queueLogin() {
@@ -57,14 +42,21 @@ public class Receiver {
         msgService.handleLogin(message);
     }
 
+    @RabbitListener(queues = "${app.queue.leaveQ}")
+    public void processLeaveMsg(String message) {
+        logger.debug("[Receiver Websocket Leave Msg]" + message);
+        msgService.handleLeave(message);
+    }
+
     @RabbitListener(queues = "${app.queue.goQ}")
     public void processGoMsg(String message) {
         logger.debug("[Receiver Login Msg]" + message);
         try {
-            Thread.sleep(1000); // simulated delay
+            Thread.sleep(11000); // simulated delay
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        msgService.handleGo(message);
         offlineService.handleOfflineMsgs(message);
     }
 
