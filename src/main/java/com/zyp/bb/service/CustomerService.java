@@ -100,8 +100,18 @@ public class CustomerService {
         }
     }
 
-    public void setName(String userID, String msg) {
-        userMessages.put(userID, msg);
+
+    public void setMsg(String accessToken, String msg) {
+        userMessages.put(accessToken, msg);
+    }
+
+    public void setName(String accessToken, String msg) {
+        String loginInfo =
+                "{\n" +
+                "   \"user_id\"    : \"8888\",\n" +
+                "   \"accessToken\": \""+accessToken +"\"\n" +
+                "}\n";
+        sender.sendLogin(loginInfo);
     }
 
     public Customer register(Customer customer) {

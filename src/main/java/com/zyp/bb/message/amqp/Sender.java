@@ -25,9 +25,8 @@ public class Sender {
     @Value("${app.queue.goQ}")
     private String queueGo;
 
-
-    @Value("${app.queue.leaveQ}")
-    private String queueLeave;
+    @Value("${app.queue.loginQ}")
+    private String queueLogin;
 
     @Bean
     public Queue queue() {
@@ -39,18 +38,22 @@ public class Sender {
         return new Queue(queueGo, true);
     }
 
+    @Bean
+    public Queue queueLogin() {
+        return new Queue(queueLogin, true);
+    }
+
     public void sendNormal(String message) {
 //        template.convertAndSend(queueNormal, "[BB]:"+message);
         template.convertSendAndReceive(queueNormal, "[BB]:"+message);
     }
 
-    public void sendLogin(String message) {
-//        template.convertAndSend(queueNormal, "[BB]:"+message);
+    public void sendGo(String message) {
         template.convertSendAndReceive(queueGo, message);
     }
 
-    public void sendLeave(String message) {
-        template.convertSendAndReceive(queueLeave, message);
+    public void sendLogin(String message) {
+        template.convertSendAndReceive(queueLogin, message);
     }
 
     public void sendJsonString(String message) {

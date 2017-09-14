@@ -26,7 +26,6 @@ function connect() {
             accessToken: accessToken,
             'client-id': 'my-client-id'
         };
-    var mysubid = 'skygreen2001';
     stompClient.connect(headers, function (frame) {
         setConnected(true);
 //        console.log('Connected: ' + frame);
@@ -38,10 +37,27 @@ function connect() {
             console.log("wonderful");
             showGreeting(JSON.parse(greeting.body).message);
         });
-        stompClient.subscribe('/user/tick', function (greeting) {
-            console.log("heart beat");
-            showGreeting(JSON.parse(greeting.body));
+        stompClient.subscribe('/user/queue/offline', function (greeting) {
+            console.log("offline");
+            showGreeting(JSON.parse(greeting.body).content);
         });
+        stompClient.subscribe('/user/tick', function (response) {
+            console.log("heart beat");
+
+            stompClient.send(
+                "/app/tick",
+                headers,
+                "0"
+                // JSON.stringify({'name': $("#name").val()})
+            );
+            showGreeting(response.body);
+        });
+
+        stompClient.send(
+            "/app/hello",
+            headers,
+            JSON.stringify({'name': accessToken})
+        );
     });
 }
 
@@ -53,16 +69,25 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
+function sendMessage() {
+    var message = $("#message").val();
     var accessToken = $("#account").val();
     var headers = {
-            accessToken: accessToken
-        };
+        "Access-token": accessToken
+    };
+
     stompClient.send(
-            "/app/hello", 
-            headers, 
-            JSON.stringify({'name': $("#name").val()})
-        );
+        "/app/hello",
+        headers,
+        JSON.stringify({'message': accessToken})
+    );
+
+    stompClient.send(
+        "/app/tick",
+        headers,
+        "0"
+        // JSON.stringify({'name': $("#name").val()})
+    );
 }
 
 function showGreeting(message) {
@@ -89,6 +114,6 @@ $(function () {
     $( "#login" ).click(function() { login(); });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#send" ).click(function() { sendMessage(); });
 });
 

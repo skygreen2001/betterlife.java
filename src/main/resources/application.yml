@@ -42,7 +42,6 @@ app:
     greet: GreetQ
     loginQ: LoginQ
     goQ: goQ
-    leaveQ: leaveQ
 
   websocket:
     url: ws://localhost:8080/better-websocket/websocket

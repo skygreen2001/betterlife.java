@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.zyp.bb.message.amqp.Sender;
+import com.zyp.bb.service.MsgHandleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.converter.MessageConverter;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -31,9 +35,9 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 
 /**
  * [STOMP Over WebSocket](http://jmesnil.net/stomp-websocket/doc/)
- *
+ * <p>
  * [Stomp Over Websocket文档](https://segmentfault.com/a/1190000006617344)
- *
+ * <p>
  * [spring websocket
  * 基于编码的方式手动进行推送](http://www.voidcn.com/blog/yingxiake/article/p-5789769.html)
  */
@@ -41,24 +45,33 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
-    private Map<String, String> sessionUserInfos= new HashMap<>();
+    private Map<String, String> sessionUserInfos = new HashMap<>();
 
     @Autowired
     Sender sender;
+
+
+    @Autowired
+    private MsgHandleService msgHandleService;
+
+
+    private final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/queue/", "/topic", "/tick")
                 .setTaskScheduler(new DefaultManagedTaskScheduler())
-                .setHeartbeatValue(new long[]{1000,1000});
+                .setHeartbeatValue(new long[]{1000, 1000});
         registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public boolean configureMessageConverters(List<MessageConverter> arg0) {
-//        StringMessageConverter strConvertor = new StringMessageConverter();
         MappingJackson2MessageConverter mc = new MappingJackson2MessageConverter();
         arg0.add(mc);
+
+        StringMessageConverter strConvertor = new StringMessageConverter();
+        arg0.add(strConvertor);
         return true;
     }
 
@@ -84,28 +97,35 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String accessToken = accessor.getFirstNativeHeader("Access-token");
-                    System.out.println("access_token:"+accessToken);
+                    String accessToken = accessor.getFirstNativeHeader("accessToken");
+                    System.out.println("access_token:" + accessToken);
                     if (!StringUtils.isEmpty(accessToken)) {
-                        accessToken = accessor.getNativeHeader("Access-token").get(0);
+                        accessToken = accessor.getNativeHeader("accessToken").get(0);
                         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
                         Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
                         SecurityContextHolder.getContext().setAuthentication(auth);
                         accessor.setUser(auth);
-                        sessionUserInfos.put( accessor.getSessionId(),accessToken);
-                        sender.sendLogin(accessToken);
+                        sessionUserInfos.put(accessor.getSessionId(), accessToken);
+                        sender.sendGo(accessToken);
                     }
-                } else if  (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     String accessToken = sessionUserInfos.get(accessor.getSessionId());
                     if (!StringUtils.isEmpty(accessToken)) {
-                        sender.sendLeave(accessToken);
+                        msgHandleService.handleLeave(accessToken);
                     }
-                } else if  (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
 //                    if (accessor.getDestination().equals("/user/queue/offline")) {
 //                        String accessToken = sessionUserInfos.get(accessor.getSessionId());
 //                        if (!StringUtils.isEmpty(accessToken)) {
 //                        }
 //                    }
+                } else if (StompCommand.SEND.equals(accessor.getCommand())) {
+                    String accessToken = sessionUserInfos.get(accessor.getSessionId());
+                    if (accessor.getDestination().equals("/app/tick")) {
+                        if (!StringUtils.isEmpty(accessToken))  msgHandleService.recordHeartbeat(accessToken);
+                        logger.debug("/app/tick");
+                    }
+                    logger.debug("StompCommand.SEND");
                 }
 
                 return message;

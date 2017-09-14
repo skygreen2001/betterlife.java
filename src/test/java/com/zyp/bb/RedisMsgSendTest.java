@@ -1,8 +1,8 @@
 package com.zyp.bb;
 
-import com.zyp.bb.domain.BbUser;
+import com.zyp.bb.respository.BbUserRepository;
 import com.zyp.bb.message.amqp.Receiver;
-import com.zyp.bb.service.OfflineService;
+import com.zyp.bb.service.MsgHandleService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -22,10 +22,10 @@ public class RedisMsgSendTest {
     Receiver receiver;
 
     @Autowired
-    private BbUser bbUser;
+    private BbUserRepository bbUser;
 
     @Autowired
-    private OfflineService offlineService;
+    private MsgHandleService msgHandleService;
 
     @Before
     public void setup() {
@@ -54,10 +54,11 @@ public class RedisMsgSendTest {
     @Test
     public void runLoginReceive() {
         //测试数据
-        String message = "{\n" +
-                "        \"user_id\": 1320,\n" +
-                "        \"access_token\": \"abcde123456~\"\n" +
-                "    }\n";
+        String message =
+                "{\n" +
+                "    \"user_id\"    : \"1320\",\n" +
+                "    \"accessToken\": \"abcde123456~\"\n" +
+                "}\n";
         receiver.processLoginMessage(message);
         //测试数据
         receiver.processGoMsg("abcde123456~");
@@ -83,8 +84,8 @@ public class RedisMsgSendTest {
         try {
             JSONObject object = new JSONObject(message);
             Long userId = object.optLong("receiver");
-            offlineService.bakUserMsg(userId, object);
-            offlineService.handleOfflineMsgs("abcde123456~");
+            msgHandleService.bakUserMsg(userId, object);
+            msgHandleService.handleOfflineMsgs("abcde123456~");
         } catch (JSONException e) {
             e.printStackTrace();
         }

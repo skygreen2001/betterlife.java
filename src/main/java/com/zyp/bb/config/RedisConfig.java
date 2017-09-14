@@ -17,7 +17,11 @@ public class RedisConfig {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        return new JedisConnectionFactory();
+        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory();
+//        jedisConFactory.setHostName("localhost");
+//        jedisConFactory.setPort(6379);
+        return jedisConFactory;
+//        return new JedisConnectionFactory();
     }
 
 
@@ -26,7 +30,7 @@ public class RedisConfig {
         final RedisTemplate< String, Object > template =  new RedisTemplate< String, Object >();
         template.setConnectionFactory( jedisConnectionFactory() );
         template.setKeySerializer( new StringRedisSerializer() );
-        template.setHashValueSerializer( new GenericToStringSerializer<  >( Object.class ) );
+//        template.setHashValueSerializer( new GenericToStringSerializer<  >( Object.class ) );
         template.setValueSerializer( new GenericToStringSerializer<  >( Object.class ) );
         return template;
     }
