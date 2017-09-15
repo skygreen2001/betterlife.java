@@ -40,8 +40,7 @@ public class GreetingResource {
     public Greeting greeting(Greeting message, @Headers MessageHeaders headers) throws Exception {
         Thread.sleep(1000); // simulated delay
         String name = message.getName();
-
-        @SuppressWarnings("unchecked")
+        String msg;
         Map<String, List<String>> map = (Map<String, List<String>>) headers
         .get(NativeMessageHeaderAccessor.NATIVE_HEADERS);
         String accessToken = "";
@@ -51,19 +50,19 @@ public class GreetingResource {
 
 
         if (!StringUtils.isEmpty(name)) {
-            customerService.setName(accessToken, message.getName());
+            customerService.setName(message.getName());
         }
 
-        String msg = message.getMessage();
+        msg = message.getMessage();
         if (!StringUtils.isEmpty(msg)) {
             customerService.setMsg(accessToken, msg);
+        }else{
+            msg = name;
         }
 
         logger.debug( "Receive Msg Info, " + msg +  "!");
         return new Greeting("Hello, " + msg + "!");
     }
-
-
 
     @MessageMapping("/tick")
     public String tick(String message, @Headers MessageHeaders headers)

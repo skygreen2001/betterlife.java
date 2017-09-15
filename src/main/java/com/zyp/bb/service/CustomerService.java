@@ -105,7 +105,7 @@ public class CustomerService {
         userMessages.put(accessToken, msg);
     }
 
-    public void setName(String accessToken, String msg) {
+    public void setName(String accessToken) {
         String loginInfo =
                 "{\n" +
                 "   \"user_id\"    : \"8888\",\n" +

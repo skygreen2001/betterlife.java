@@ -79,7 +79,7 @@ function sendMessage() {
     stompClient.send(
         "/app/hello",
         headers,
-        JSON.stringify({'message': accessToken})
+        JSON.stringify({'message': message})
     );
 
     stompClient.send(
