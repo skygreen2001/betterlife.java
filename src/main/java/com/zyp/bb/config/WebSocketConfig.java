@@ -59,10 +59,13 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/queue/", "/topic", "/tick")
-                .setTaskScheduler(new DefaultManagedTaskScheduler())
-                .setHeartbeatValue(new long[]{1000, 1000});
         registry.setApplicationDestinationPrefixes("/app");
+
+        registry.enableSimpleBroker("/queue/", "/topic", "/tick");
+
+        registry.enableSimpleBroker("/")
+                .setTaskScheduler(new DefaultManagedTaskScheduler())
+                .setHeartbeatValue(new long[]{10000, 10000});
     }
 
     @Override
@@ -95,39 +98,85 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String accessToken = accessor.getFirstNativeHeader("accessToken");
-                    System.out.println("access_token:" + accessToken);
-                    if (!StringUtils.isEmpty(accessToken)) {
-                        accessToken = accessor.getNativeHeader("accessToken").get(0);
-                        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
-                        Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
-                        SecurityContextHolder.getContext().setAuthentication(auth);
-                        accessor.setUser(auth);
-                        sessionUserInfos.put(accessor.getSessionId(), accessToken);
-                        sender.sendGo(accessToken);
+                String accessToken;
+                if (accessor.getMessageType().toString().equals("HEARTBEAT")) {
+                    accessToken = sessionUserInfos.get(accessor.getSessionId());
+                    if (!StringUtils.isEmpty(accessToken)) msgHandleService.recordHeartbeat(accessToken);
+                    logger.debug("heart beat:" + accessToken);
+                } else {
+                    if (accessor.getCommand() != null) {
+                        switch (accessor.getCommand()) {
+                            case STOMP:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("stomp:" + accessToken);
+                                break;
+                            case CONNECT:
+                                accessToken = accessor.getFirstNativeHeader("accessToken");
+                                logger.debug("connect:" + accessToken);
+                                if (!StringUtils.isEmpty(accessToken)) {
+                                    accessToken = accessor.getNativeHeader("accessToken").get(0);
+                                    List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+                                    Authentication auth = new UsernamePasswordAuthenticationToken(accessToken, null, grantedAuthorities);
+                                    SecurityContextHolder.getContext().setAuthentication(auth);
+                                    accessor.setUser(auth);
+                                    sessionUserInfos.put(accessor.getSessionId(), accessToken);
+                                    sender.sendGo(accessToken);
+                                }
+                                break;
+                            case DISCONNECT:
+                                accessToken = sessionUserInfos.get(accessor.getSessionId());
+                                logger.debug("disconnect:" + accessToken);
+                                if (!StringUtils.isEmpty(accessToken)) {
+                                    msgHandleService.handleLeave(accessToken);
+                                }
+                                break;
+                            case SUBSCRIBE:
+                                accessToken = sessionUserInfos.get(accessor.getSessionId());
+                                logger.debug("subscribe:" + accessToken + ";destination" + accessor.getDestination());
+                                break;
+                            case SEND:
+                                accessToken = sessionUserInfos.get(accessor.getSessionId());
+                                if (accessor.getDestination().equals("/app/tick")) {
+                                    if (!StringUtils.isEmpty(accessToken))
+                                        msgHandleService.recordHeartbeat(accessToken);
+                                    logger.debug("/app/tick");
+                                }
+                            case ACK:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("ACK:" + accessToken);
+                                break;
+                            case NACK:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("NACK:" + accessToken);
+                                break;
+                            case CONNECTED:
+                                accessToken = sessionUserInfos.get(accessor.getSessionId());
+                                logger.debug("connected:" + accessToken);
+                                break;
+                            case RECEIPT:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("receipt:" + accessToken);
+                                break;
+                            case MESSAGE:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("message:" + accessToken);
+                                break;
+                            case ERROR:
+                                accessToken = accessor.getNativeHeader("Access-token").get(0);
+                                logger.debug("error:" + accessToken);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-                    String accessToken = sessionUserInfos.get(accessor.getSessionId());
-                    if (!StringUtils.isEmpty(accessToken)) {
-                        msgHandleService.handleLeave(accessToken);
-                    }
-                } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
-//                    if (accessor.getDestination().equals("/user/queue/offline")) {
-//                        String accessToken = sessionUserInfos.get(accessor.getSessionId());
-//                        if (!StringUtils.isEmpty(accessToken)) {
-//                        }
-//                    }
-                } else if (StompCommand.SEND.equals(accessor.getCommand())) {
-                    String accessToken = sessionUserInfos.get(accessor.getSessionId());
-                    if (accessor.getDestination().equals("/app/tick")) {
-                        if (!StringUtils.isEmpty(accessToken))  msgHandleService.recordHeartbeat(accessToken);
-                        logger.debug("/app/tick");
-                    }
-                    logger.debug("StompCommand.SEND");
                 }
 
+//            MessageHeaders mhds = accessor.getMessageHeaders();
+//            for (String key : mhds.keySet()
+//                    ) {
+//                String value = mhds.get(key).toString();
+//                logger.debug("key:" + key + ";value:" + value);
+//            }
                 return message;
             }
         });

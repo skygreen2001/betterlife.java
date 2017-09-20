@@ -67,12 +67,12 @@ public class GreetingResource {
     @MessageMapping("/tick")
     public String tick(String message, @Headers MessageHeaders headers)
             throws Exception {
-        Map<String, List<String>> map= (Map<String, List<String>>) headers.get(NativeMessageHeaderAccessor.NATIVE_HEADERS);
-        if (map != null && map.get("Access-token") != null) {
-            String accessToken = map.get("Access-token").get(0);
-            msgHandleService.recordHeartbeat(accessToken);
-        }
-        logger.debug("message:" + message);
+//        Map<String, List<String>> map= (Map<String, List<String>>) headers.get(NativeMessageHeaderAccessor.NATIVE_HEADERS);
+//        if (map != null && map.get("Access-token") != null) {
+//            String accessToken = map.get("Access-token").get(0);
+//            msgHandleService.recordHeartbeat(accessToken);
+//        }
+//        logger.debug("message:" + message);
         return "1";
     }
 }

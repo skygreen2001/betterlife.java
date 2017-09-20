@@ -65,8 +65,10 @@ public class BbUserRepository {
     {
         BbUser bbUser = this.get(accessToken);
         if (bbUser != null){
-            bbUser.setOnline(status);
-            hashOps.put(bbuser_key, bbUser.getUserId(), bbUser);
+            if (bbUser.isOnline()!=status) {
+                bbUser.setOnline(status);
+                hashOps.put(bbuser_key, bbUser.getUserId(), bbUser);
+            }
         }
     }
 
