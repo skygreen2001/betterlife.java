@@ -52,20 +52,6 @@ public class RedisMsgSendTest {
     }
 
     @Test
-    public void runLoginReceive() {
-        //测试数据
-        String message =
-                "{\n" +
-                "    \"user_id\"    : \"1320\",\n" +
-                "    \"accessToken\": \"abcde123456~\"\n" +
-                "}\n";
-        receiver.processLoginMessage(message);
-        //测试数据
-        receiver.processGoMsg("abcde123456~");
-
-    }
-
-    @Test
     public void runRedis() {
         String message = "{\n" +
                 "    \"data\": {\n" +
@@ -84,7 +70,7 @@ public class RedisMsgSendTest {
         try {
             JSONObject object = new JSONObject(message);
             Long userId = object.optLong("receiver");
-            msgHandleService.bakUserMsg(userId, object);
+            msgHandleService.bakUserMsg(userId, object, false);
             msgHandleService.handleOfflineMsgs("abcde123456~");
         } catch (JSONException e) {
             e.printStackTrace();

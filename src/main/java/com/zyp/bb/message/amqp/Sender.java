@@ -22,20 +22,12 @@ public class Sender {
     @Value("${app.queue.normal}")
     private String queueNormal;
 
-    @Value("${app.queue.goQ}")
-    private String queueGo;
-
     @Value("${app.queue.loginQ}")
     private String queueLogin;
 
     @Bean
     public Queue queue() {
         return new Queue(queueNormal, true);
-    }
-
-    @Bean
-    public Queue queueGo() {
-        return new Queue(queueGo, true);
     }
 
     @Bean
@@ -46,10 +38,6 @@ public class Sender {
     public void sendNormal(String message) {
 //        template.convertAndSend(queueNormal, "[BB]:"+message);
         template.convertSendAndReceive(queueNormal, "[BB]:"+message);
-    }
-
-    public void sendGo(String message) {
-        template.convertSendAndReceive(queueGo, message);
     }
 
     public void sendLogin(String message) {

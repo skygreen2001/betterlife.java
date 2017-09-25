@@ -16,7 +16,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class BbMsg implements Serializable {
-    private final static String suffix_key = "-ittrmsg";
+    private final static String suffix_key = "-bbmsg";
+    private final static String suffix_key_send = "-bb-sendmsg";
 
     @Autowired
     private RedisTemplate< String, Object > template;
@@ -30,6 +31,45 @@ public class BbMsg implements Serializable {
         String key = String.format("%s" + suffix_key, userId);
         template.opsForList().rightPush(key, msg);
         template.expire(key, 7, TimeUnit.DAYS);//默认保存7天
+    }
+
+    /**
+     * 备份发送的消息
+     * @param userId
+     * @param msg
+     */
+    public void appendSendMsg( final Long userId, final JSONObject msg ) {
+        String key = String.format("%s" + suffix_key_send, userId);
+        template.opsForList().rightPush(key, msg);
+        template.expire(key, 7, TimeUnit.DAYS);//默认保存7天
+    }
+
+    /**
+     * 删除确认已发送的消息
+     * @param userId
+     */
+    public void deleteSendMsg( final Long userId ){
+        final String key = String.format("%s" + suffix_key_send, userId);
+        template.delete(key);
+    }
+
+
+    /**
+     * 备份断线未发送的消息
+     * @param userId
+     */
+    public void bakSendMsg( final Long userId ) {
+        final String key = String.format("%s" + suffix_key_send, userId);
+        List<Object> msgs  = template.opsForList().range(key,0, -1);
+
+        String bak_key = String.format("%s" + suffix_key, userId);
+        if (msgs!=null && msgs.size()>0){
+            for (Object msg :
+                    msgs) {
+                template.opsForList().rightPush(bak_key, msg);
+            }
+        }
+        template.delete(key);
     }
 
     /**

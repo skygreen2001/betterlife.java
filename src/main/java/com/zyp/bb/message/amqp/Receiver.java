@@ -27,15 +27,4 @@ public class Receiver {
         msgService.handleLogin(message);
     }
 
-    @RabbitListener(queues = "${app.queue.goQ}")
-    public void processGoMsg(String message) {
-        logger.debug("[Receiver Login Msg]" + message);
-        try {
-            Thread.sleep(11000); // simulated delay
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        msgService.handleOfflineMsgs(message);
-    }
-
 }

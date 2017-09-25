@@ -52,7 +52,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 
     @Autowired
-    private MsgHandleService msgHandleService;
+    private MsgHandleService msgService;
 
 
     private final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
@@ -101,7 +101,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                 String accessToken;
                 if (accessor.getMessageType().toString().equals("HEARTBEAT")) {
                     accessToken = sessionUserInfos.get(accessor.getSessionId());
-                    if (!StringUtils.isEmpty(accessToken)) msgHandleService.recordHeartbeat(accessToken);
+                    if (!StringUtils.isEmpty(accessToken)) msgService.recordHeartbeat(accessToken);
                     logger.debug("heart beat:" + accessToken);
                 } else {
                     if (accessor.getCommand() != null) {
@@ -120,14 +120,13 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                                     SecurityContextHolder.getContext().setAuthentication(auth);
                                     accessor.setUser(auth);
                                     sessionUserInfos.put(accessor.getSessionId(), accessToken);
-                                    sender.sendGo(accessToken);
                                 }
                                 break;
                             case DISCONNECT:
                                 accessToken = sessionUserInfos.get(accessor.getSessionId());
-                                logger.debug("disconnect:" + accessToken);
                                 if (!StringUtils.isEmpty(accessToken)) {
-                                    msgHandleService.handleLeave(accessToken);
+                                    logger.debug("disconnect:" + accessToken);
+                                    msgService.handleLeave(accessToken);
                                 }
                                 break;
                             case SUBSCRIBE:
@@ -137,8 +136,10 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                             case SEND:
                                 accessToken = sessionUserInfos.get(accessor.getSessionId());
                                 if (accessor.getDestination().equals("/app/tick")) {
-                                    if (!StringUtils.isEmpty(accessToken))
-                                        msgHandleService.recordHeartbeat(accessToken);
+                                    if (!StringUtils.isEmpty(accessToken)) {
+                                        msgService.recordHeartbeat(accessToken);
+                                        msgService.handleOfflineMsgs(accessToken);
+                                    }
                                     logger.debug("/app/tick");
                                 }
                             case ACK:

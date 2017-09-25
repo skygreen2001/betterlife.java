@@ -14,10 +14,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -118,8 +121,9 @@ public class MsgHandleService {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        this.bakUserMsg(userId, data, true);
                     } else {
-                        this.bakUserMsg(userId, data);
+                        this.bakUserMsg(userId, data, false);
                     }
                     if ( result!=null ) template.convertAndSend("/topic/greetings", result);
                 }
@@ -134,8 +138,13 @@ public class MsgHandleService {
      *
      * @param accessToken
      */
-    public void recordHeartbeat(String accessToken) {
+    public void recordHeartbeat(String accessToken)
+    {
         bbUserDao.update(accessToken, ZonedDateTime.now());
+        if (!StringUtils.isEmpty(accessToken)) {
+            Long userId = bbUserDao.getUserId(accessToken);
+            bbMsg.deleteSendMsg(userId);
+        }
     }
 
     /**
@@ -164,9 +173,14 @@ public class MsgHandleService {
      * @param access_token
      */
     public void handleLeave(String access_token) {
-        Long userId = bbUserDao.getUserId(access_token);
-        bbUserDao.set(userId, null);
-        logger.debug("logout leave userId:" + userId);
+        if (!StringUtils.isEmpty(access_token)) {
+            bbUserDao.update(access_token, false);
+            Long userId = bbUserDao.getUserId(access_token);
+            if (userId != null) {
+                bbMsg.bakSendMsg(userId);
+            }
+        }
+        logger.debug("logout leave userId:" + access_token);
     }
 
 
@@ -175,13 +189,20 @@ public class MsgHandleService {
      *
      * @param userId
      */
-    public void bakUserMsg(Long userId, JSONObject object) {
+    public void bakUserMsg(Long userId, JSONObject object, boolean isOnline) {
         try {
             JSONObject data = object.optJSONObject("data");
             if (data != null) {
-                data.put("createtime", UtilsCommon.now());
+//                data.put("createtime", UtilsCommon.now());
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");//设置日期格式
+                String now = df.format(new Date()) + ".000Z";
+                data.put("createtime", now);
             }
-            bbMsg.append(userId, object);
+            if (isOnline) {
+                bbMsg.appendSendMsg(userId, object);
+            }else{
+                bbMsg.append(userId, object);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
