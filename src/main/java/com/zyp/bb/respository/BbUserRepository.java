@@ -206,6 +206,22 @@ public class BbUserRepository {
     }
 
     /**
+     * 重启加载所有用户到缓存里
+     */
+    public void loadAllLoginUsers() {
+        Map<Object, Object> userIds = hashOps.entries(ittruser_key);
+        IttrUser ittrUser;
+        Long userId;
+        Map<Long, IttrUser> result = new HashMap<>();
+        for (Object userIdTmp : userIds.keySet()) {
+            ittrUser =  (IttrUser) hashOps.get(ittruser_key, userIdTmp);
+            userId = ittrUser.getUserId();
+            userInfos.put(ittrUser.getAccessToken(), userId);
+            logger.debug("load all login users: key = " + userId + ", value = " + ittrUser.getAccessToken());
+        }
+    }
+
+    /**
      * 报告登录用户信息
      * @return
      */

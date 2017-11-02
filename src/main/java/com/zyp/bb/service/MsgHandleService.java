@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
@@ -103,6 +104,15 @@ public class MsgHandleService {
         }
     }
 
+
+    /**
+     * 重启加载所有用户到缓存里
+     */
+    @PostConstruct
+    public void init() {
+        bbUserDao.loadAllLoginUsers();
+    }
+
     /**
      * 处理接收到的消息
      */
@@ -144,6 +154,17 @@ public class MsgHandleService {
         if (!StringUtils.isEmpty(accessToken)) {
             Long userId = bbUserDao.getUserId(accessToken);
             bbMsg.deleteSendMsg(userId);
+        }
+    }
+
+    /**
+     * 重置登录
+     * @param accessToken
+     */
+    public void resetLogin(String accessToken) {
+        Long userId = ittrUserDao.getUserId(accessToken);
+        if (userId != null) {
+            ittrUserDao.set(userId, accessToken, 1);
         }
     }
 

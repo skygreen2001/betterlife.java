@@ -120,6 +120,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                                     SecurityContextHolder.getContext().setAuthentication(auth);
                                     accessor.setUser(auth);
                                     sessionUserInfos.put(accessor.getSessionId(), accessToken);
+                                    msgService.resetLogin(accessToken);
                                 }
                                 break;
                             case DISCONNECT:
