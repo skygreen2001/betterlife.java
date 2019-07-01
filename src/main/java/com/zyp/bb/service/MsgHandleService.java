@@ -20,10 +20,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by skygreen on 06/09/2017.
@@ -135,7 +132,9 @@ public class MsgHandleService {
                     } else {
                         this.bakUserMsg(userId, data, false);
                     }
-                    if ( result!=null ) template.convertAndSend("/topic/greetings", result);
+                    if ( result!=null ) {
+                        template.convertAndSend("/topic/greetings", result);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -162,9 +161,9 @@ public class MsgHandleService {
      * @param accessToken
      */
     public void resetLogin(String accessToken) {
-        Long userId = ittrUserDao.getUserId(accessToken);
+        Long userId = bbUserDao.getUserId(accessToken);
         if (userId != null) {
-            ittrUserDao.set(userId, accessToken, 1);
+            bbUserDao.setOnline(userId, accessToken);
         }
     }
 
@@ -180,7 +179,16 @@ public class MsgHandleService {
                 JSONObject object = new JSONObject(message);
                 String access_token = object.optString("accessToken");
                 long user_id = object.optLong("user_id");
-                bbUserDao.set(user_id, access_token);
+                int onlineStatus = object.optInt("online");
+                bbUserDao.set(user_id, access_token, onlineStatus);
+                if (bbUserDao.firstLoginOfflineMsgUsers == null) {
+                    bbUserDao.firstLoginOfflineMsgUsers = new HashSet<>();
+                }
+                if (onlineStatus == 1) {
+                    bbUserDao.firstLoginOfflineMsgUsers.add(user_id);
+                } else {
+                    bbUserDao.firstLoginOfflineMsgUsers.remove(user_id);
+                }
                 bbUserDao.report();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -239,7 +247,7 @@ public class MsgHandleService {
         if (userId != null) {
             logger.debug("handleOfflineMsgs:token:" + access_token + ",userId:" + userId);
 //            logger.debug("send msg to token:"+access_token);
-            bbUserDao.set(userId, access_token);
+            bbUserDao.setOnline(userId, access_token);
             List<JSONObject> msgs = bbMsg.getAll(userId);
             if (msgs != null && msgs.size() > 0) {
                 Object result;

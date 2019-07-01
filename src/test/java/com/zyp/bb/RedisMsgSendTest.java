@@ -47,7 +47,7 @@ public class RedisMsgSendTest {
                 "    \"receiver\": 5483,\n" +
                 "    \"type\": \"TASK\"\n" +
                 "}";
-        bbUser.set(1320L,"abcde123456~");
+        bbUser.set(1320L,"abcde123456~", 1);
         receiver.processMessage(message);
     }
 
@@ -66,7 +66,7 @@ public class RedisMsgSendTest {
                 "    \"receiver\": 5483,\n" +
                 "    \"type\": \"TASK\"\n" +
                 "}";
-        bbUser.set(5483L,"abcde123456~");
+        bbUser.set(5483L,"abcde123456~", 1);
         try {
             JSONObject object = new JSONObject(message);
             Long userId = object.optLong("receiver");

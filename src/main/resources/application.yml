@@ -30,8 +30,13 @@ spring:
     host: localhost
 #    host: debug.betterlife.com
     port: 5672
-    username: skygreen2001
+    username: itaskTour2006
     password: skygreen2001
+  redis:
+    host: localhost
+#    port: 6379
+    port: 8368
+    password:
 
 # ========================== 本应用自定义配置 ==========================
 app:

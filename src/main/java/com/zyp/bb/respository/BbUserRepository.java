@@ -26,6 +26,7 @@ public class BbUserRepository {
     private RedisTemplate< String, Object > redisTemplate;
 
     private Map<String, Long> userInfos= new HashMap<>();
+    public Set<Long> firstLoginOfflineMsgUsers = new HashSet<>();
 
     private HashOperations hashOps;
 
@@ -44,20 +45,55 @@ public class BbUserRepository {
      * @param userId
      * @param accessToken
      */
-    public void set( final Long userId, final String accessToken ) {
+    public void set( final Long userId, final String accessToken, Integer onlineStatus ) {
         if (userId!=null && userId>0) {
             BbUser bbUser = this.get(userId);
             if (!StringUtils.isEmpty(accessToken)) {
+                if ( onlineStatus!=null && onlineStatus == 1) {
+                    if (bbUser == null) {
+                        bbUser = new BbUser(userId, accessToken);
+                    }
+                    bbUser.setLastTime(ZonedDateTime.now());
+                    userInfos.put(accessToken, userId);
+                    bbUser.setOnline(true);
+                } else {
+                    if (bbUser != null) {
+                        bbUser.setOnline(false);
+                    }
+                }
+            } else {
+                if (bbUser != null) {
+                    bbUser.setOnline(false);
+                }
+            }
+            hashOps.put(bbuser_key, userId, bbUser);
+        }
+    }
+
+    /**
+     * 添加或者编辑用户登录信息
+     *
+     * @param userId
+     * @param accessToken
+     */
+    public void setOnline(final Long userId, String accessToken) {
+        if (userId!=null && userId>0) {
+            BbUser bbUser = (BbUser) hashOps.get(bbuser_key, userId);
+
+            if (!StringUtils.isEmpty(accessToken)) {
                 if (bbUser == null) {
                     bbUser = new BbUser(userId, accessToken);
+                } else {
+                    bbUser.setAccessToken(accessToken);
                 }
                 bbUser.setOnline(true);
                 bbUser.setLastTime(ZonedDateTime.now());
                 userInfos.put(accessToken, userId);
-            } else {
-                if (bbUser != null) bbUser.setOnline(false);
             }
-            hashOps.put(bbuser_key, userId, bbUser);
+
+            if (bbUser != null) {
+                hashOps.put(bbuser_key, userId, bbUser);
+            }
         }
     }
 
@@ -122,8 +158,12 @@ public class BbUserRepository {
         boolean result = false;
         if (userId!=null && userId>0) {
             BbUser bbUser = this.get(userId);
-            if (bbUser == null) return true;
-            if (bbUser != null && bbUser.isOnline() == false) return true;
+            if (bbUser == null) {
+                return true;
+            }
+            if (bbUser != null && bbUser.isOnline() == false) {
+                return true;
+            }
         }else{
             return true;
         }
@@ -183,7 +223,9 @@ public class BbUserRepository {
         for (Object userIdTmp : userIds.keySet()) {
             bbUser =  (BbUser) hashOps.get(bbuser_key, userIdTmp);
             userId = bbUser.getUserId();
-            if (!this.isUserOffline(userId)) result.put(userId, bbUser.getAccessToken());
+            if (!this.isUserOffline(userId)) {
+                result.put(userId, bbUser.getAccessToken());
+            }
         }
         return result;
     }
@@ -200,7 +242,9 @@ public class BbUserRepository {
         for (Object userIdTmp : userIds.keySet()) {
             bbUser =  (BbUser) hashOps.get(bbuser_key, userIdTmp);
             userId = bbUser.getUserId();
-            if (!this.isUserOffline(userId)) result.put(userId, bbUser);
+            if (!this.isUserOffline(userId)) {
+                result.put(userId, bbUser);
+            }
         }
         return result;
     }
@@ -209,15 +253,15 @@ public class BbUserRepository {
      * 重启加载所有用户到缓存里
      */
     public void loadAllLoginUsers() {
-        Map<Object, Object> userIds = hashOps.entries(ittruser_key);
-        IttrUser ittrUser;
+        Map<Object, Object> userIds = hashOps.entries(bbuser_key);
+        BbUser bbUser;
         Long userId;
-        Map<Long, IttrUser> result = new HashMap<>();
+        Map<Long, BbUser> result = new HashMap<>();
         for (Object userIdTmp : userIds.keySet()) {
-            ittrUser =  (IttrUser) hashOps.get(ittruser_key, userIdTmp);
-            userId = ittrUser.getUserId();
-            userInfos.put(ittrUser.getAccessToken(), userId);
-            logger.debug("load all login users: key = " + userId + ", value = " + ittrUser.getAccessToken());
+            bbUser =  (BbUser) hashOps.get(bbuser_key, userIdTmp);
+            userId = bbUser.getUserId();
+            userInfos.put(bbUser.getAccessToken(), userId);
+            logger.debug("load all login users: key = " + userId + ", value = " + bbUser.getAccessToken());
         }
     }
 
@@ -231,8 +275,9 @@ public class BbUserRepository {
         for (Long userId:
                 accessTokes.keySet()) {
             accessToken = accessTokes.get(userId);
-            if (!this.isUserOffline(userId))
+            if (!this.isUserOffline(userId)) {
                 logger.debug("key = " + userId + ", value = " + accessToken);
+            }
         }
     }
 }

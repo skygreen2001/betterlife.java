@@ -1,5 +1,6 @@
 package com.zyp.bb;
 
+import com.zyp.bb.util.socket.server.SocketServer;
 import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -28,6 +29,9 @@ public class Application implements CommandLineRunner {
     @Autowired
     Sender sender;
 
+//    @Autowired
+//    private SocketServer socketServer;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
@@ -35,6 +39,8 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         sender.sendNormal("Hello this is rabbit Messaging!!!");
+
+//        socketServer.run();
     }
 
     @Bean
