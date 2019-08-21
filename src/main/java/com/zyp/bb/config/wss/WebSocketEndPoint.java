@@ -1,4 +1,4 @@
-package com.zyp.bb.config;
+package com.zyp.bb.config.wss;
 
 import org.springframework.stereotype.Component;
 
@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * Spring Boot 系列 - WebSocket 简单使用: https://www.jianshu.com/p/161df01cc8af
  * 微信小程序第五弹 websocket使用 +java后台代码: https://www.jianshu.com/p/9d91a560c459
  * springboot集成websocket实现: http://www.manongjc.com/detail/6-quhmitfrltnogpt.html
+ * java使用websocket，并且获取HttpSession: https://www.cnblogs.com/zhuxiaojie/p/6238826.html
  *
  * @ServerEndpoint 注解是一个类层次的注解，它的功能主要是将目前的类定义成一个websocket服务器端,
  * 注解的值将被用于监听用户连接的终端访问URL地址,客户端可以通过这个URL来连接到WebSocket服务器端
@@ -19,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 // 搭建微信小程序服务: https://zhuanlan.zhihu.com/p/28057698
 // 微信小程序访问服务端类似路径: wss://wss.bb.com/wss/bbwx/websocket (域名路径: wss://wss.bb.com/wss/, 端口: 443)
-@ServerEndpoint("/bbwx/websocket")
+@ServerEndpoint(value="/bbwx/websocket", configurator = WebsocketConfigurator.class)
 @Component
 public class WebSocketEndPoint {
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
@@ -31,13 +32,20 @@ public class WebSocketEndPoint {
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
 
+    // 用户标识
+    private Long userId;
+
+    // 用户 Access Token
+    private String at;
     /**
      * 连接建立成功调用的方法
      * @param session  可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
     @OnOpen
-    public void onOpen(Session session){
+    public void onOpen(Session session, EndpointConfig config){
         this.session = session;
+        this.userId = Long.parseLong(config.getUserProperties().get("userId").toString());
+        this.at = config.getUserProperties().get("at").toString();
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
         System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());

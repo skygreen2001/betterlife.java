@@ -1,4 +1,4 @@
-package com.zyp.bb.config;
+package com.zyp.bb.config.wss;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
